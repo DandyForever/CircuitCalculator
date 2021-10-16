@@ -4,18 +4,29 @@
 #include <sstream>
 #include "matrix.h"
 #include "graph.h"
+#include "input_parser.h"
 
 class circuit {
 public:
     circuit(const std::string& input_string);
 
-    void calculate();
+    void calculate_edge_current();
+    std::string get_edge_current_answer();
 
 private:
-    matrix<double> conductivity_matrix;
-    matrix<double> emf_matrix;
-    matrix<double> incidence_matrix;
+    matrix<double> conductivity_matrix{};
+    matrix<double> emf_matrix{};
+    matrix<double> incidence_matrix{};
+    matrix<double> edge_current_matrix{};
     graph circuit_graph;
+
+    void fill_conductivity_matrix(const std::vector<double> &edge_resistance, size_t edge_number);
+    void fill_emf_matrix(const std::vector<double> &edge_voltage, size_t edge_number);
+    void fill_incidence_matrix(size_t vertex_number, size_t edge_number);
+    void fill_circuit_matrices(const std::vector<double> &edge_resistance,
+                               const std::vector<double> &edge_voltage);
+
+    std::pair<std::vector<double>, std::vector<double>> fill_circuit_graph(input_parser &parser);
 };
 
 

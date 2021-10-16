@@ -1,15 +1,17 @@
 #include "graph.h"
 
 void graph::add_edge(vertex first, vertex second) {
-    size_t max_vertex = std::max(first, second);
-    if (max_vertex > incoming_edges.size()) {
-        incoming_edges.resize(max_vertex);
-        outcoming_edges.resize(max_vertex);
-    }
+    size_t max_vertex = std::max(first + 1, second + 1);
+    resize_structures(max_vertex);
     edge current = edges_vertices.size();
-    size_t first_index = first - 1;
-    size_t second_index = second - 1;
-    incoming_edges[first_index].push_back(current);
-    outcoming_edges[second_index].push_back(current);
-    edges_vertices.emplace_back(first_index, second_index);
+    outcoming_edges[first].push_back(current);
+    incoming_edges[second].push_back(current);
+    edges_vertices.emplace_back(first, second);
+}
+
+void graph::resize_structures(size_t necessary_size) {
+    if (necessary_size > incoming_edges.size()) {
+        incoming_edges.resize(necessary_size);
+        outcoming_edges.resize(necessary_size);
+    }
 }

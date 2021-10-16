@@ -26,7 +26,7 @@ public:
             return data[col_index];
         }
     };
-
+    matrix() = default;
     matrix(size_t row_number, size_t col_number);
     matrix(const matrix& another_matrix);
     matrix(matrix&& another_matrix) noexcept;
@@ -53,13 +53,9 @@ public:
     matrix<T> inverse() const;
         bool is_square() const;
         matrix<T> get_minor(const size_t row_, const size_t col_) const;
-        T get_inverse_element(const size_t row_, const size_t col_, const matrix<T>& minor) const;
-        matrix<T> calculate_slae(const matrix<T>& free_members_column) const;
-            bool is_column() const;
-            bool is_aligned_for_slae(const matrix<T>& free_members_column) const;
 
     T get_determinant() const;
-        std::pair<matrix<T>, matrix<T>> decomposition() const;
+        std::pair<matrix<T>, matrix<T>> get_decomposition() const;
 
     void print() const;
     ~matrix();
@@ -70,6 +66,13 @@ private:
     size_t col_number_;
 
         void free_data();
+
+        T get_inverse_element(const size_t row_, const size_t col_, const matrix<T>& minor) const;
+
+        void initialize_lower() const;
+        void fill_decomposition(matrix<T> &lower, matrix<T> &upper) const;
+            void fill_upper_iteration(const matrix<T> &lower, matrix<T> &upper, size_t row_, size_t col_) const;
+            void fill_lower_iteration(matrix<T> &lower, const matrix<T> &upper, size_t row_, size_t col_) const;
 };
 
 template <typename T>
@@ -80,6 +83,9 @@ matrix<T>::matrix(size_t row_number, size_t col_number):
     data = new row[row_number];
     for (size_t row_ = 0; row_ < row_number; row_++) {
         data[row_].allocate_data(col_number);
+        for (size_t col_ = 0; col_ < col_number_; col_++) {
+            data[row_][col_] = static_cast<T>(0);
+        }
     }
 }
 
@@ -156,6 +162,13 @@ bool matrix<T>::is_equal_size(const matrix<T>& another_matrix) const {
 }
 
 template <typename T>
+matrix<T> operator-(const matrix<T>& left_matrix, const matrix<T>& right_matrix) {
+    matrix<T> result{left_matrix};
+    result -= right_matrix;
+    return result;
+}
+
+template <typename T>
 matrix<T>& matrix<T>::operator*= (const matrix<T>& another_matrix) {
     if (!is_multiplication_possible(another_matrix))
         throw std::runtime_error("Matrices could not be multiplied!");
@@ -176,6 +189,13 @@ matrix<T>& matrix<T>::operator*= (const matrix<T>& another_matrix) {
 template <typename T>
 bool matrix<T>::is_multiplication_possible(const matrix<T>& another_matrix) const {
     return col_number_ == another_matrix.row_number_;
+}
+
+template <typename T>
+matrix<T> operator*(const matrix<T>& left_matrix, const matrix<T>& right_matrix) {
+    matrix<T> result{left_matrix};
+    result *= right_matrix;
+    return result;
 }
 
 template <typename T>
@@ -204,28 +224,6 @@ void matrix<T>::free_data() {
     }
     delete [] data;
 }
-
-//template <typename T>
-//matrix<T> matrix<T>::inverse() const {
-//    if (!is_square())
-//        throw std::runtime_error("Invert matrix could not be calculated");
-//
-//    auto result = matrix<T>(row_number_, col_number_);
-//    auto identity_column = matrix<T>(row_number_, 1);
-//    for (size_t col_ = 0; col_ < col_number_; col_++) {
-//        for (size_t row_ = 0; row_ < row_number_; row_++) {
-//            if (row_ == col_)
-//                identity_column[row_][0] = static_cast<T>(1);
-//            else
-//                identity_column[row_][0] = static_cast<T>(0);
-//        }
-//        auto intermediate_result = calculate_slae(identity_column);
-//        for (size_t row_ = 0; row_ < row_number_; row_++) {
-//            result[row_][col_] = intermediate_result[row_][0];
-//        }
-//    }
-//    return result;
-//}
 
 template <typename T>
 matrix<T> matrix<T>::inverse() const {
@@ -274,61 +272,11 @@ T matrix<T>::get_inverse_element(const size_t row_, const size_t col_, const mat
 }
 
 template <typename T>
-matrix<T> matrix<T>::calculate_slae(const matrix<T>& free_members_column) const {
-    if (!free_members_column.is_column() || !is_aligned_for_slae(free_members_column))
-        throw std::runtime_error("Cannot Solve System of linear algebraic equations!");
-
-    auto solution = matrix<T>(row_number_, 1);
-    auto iteration = matrix<T>(row_number_, 1);
-    for (size_t row_ = 0; row_ < row_number_; row_++) {
-        solution[row_][0] = free_members_column[row_][0] / data[row_][row_];
-    }
-
-    T eps = static_cast<T>(0.01);
-    do {
-        for (size_t row_ = 0; row_ < row_number_; row_++) {
-            iteration[row_][0] = free_members_column[row_][0] / data[row_][row_];
-            for (size_t col_ = 0; col_ < col_number_; col_++) {
-                if (row_ != col_) {
-                    iteration[row_][0] -= data[row_][col_] / data[row_][row_] * solution[col_][0];
-                }
-            }
-        }
-
-        bool is_accurate = true;
-
-        for (size_t row_ = 0; row_ < row_number_; row_++) {
-            if (std::abs(iteration[row_][0] - solution[row_][0]) > eps) {
-                is_accurate = false;
-                break;
-            }
-        }
-
-        solution = iteration;
-        std::cout << std::endl;
-        if (is_accurate)
-            break;
-    } while (true);
-
-    return solution;
-}
-
-template <typename T>
-bool matrix<T>::is_column() const {
-    return col_number_ == 1;
-}
-
-template <typename T>
-bool matrix<T>::is_aligned_for_slae(const matrix<T>& free_members_column) const {
-    return row_number_ == free_members_column.row_number_;
-}
-
-template <typename T>
 T matrix<T>::get_determinant() const {
     if (row_number_ != col_number_)
         throw std::runtime_error("Cannot calculate matrix determinant");
 
-    auto [lower, upper] = decomposition();
+    auto [lower, upper] = get_decomposition();
     T lower_determinant = static_cast<T>(1);
     T upper_determinant = static_cast<T>(1);
     for (size_t row_ = 0; row_ < row_number_; row_++) {
@@ -339,38 +287,55 @@ T matrix<T>::get_determinant() const {
 }
 
 template <typename T>
-std::pair<matrix<T>, matrix<T>> matrix<T>::decomposition() const {
+std::pair<matrix<T>, matrix<T>> matrix<T>::get_decomposition() const {
     if (!is_square())
         throw std::runtime_error("Cannot make matrix decomposition");
 
     auto lower = matrix<T>(row_number_, col_number_);
+    lower.initialize_lower();
     auto upper = matrix<T>(row_number_, col_number_);
-    for (size_t row_ = 0; row_ < row_number_; row_++) {
-        for (size_t col_ = 0; col_ < col_number_; col_++) {
-            if (row_ == col_) {
-                lower[row_][row_] = static_cast<T>(1);
-            } else {
-                lower[row_][col_] = static_cast<T>(0);
-                upper[row_][col_] = static_cast<T>(0);
-            }
-        }
-    }
+    fill_decomposition(lower, upper);
+    return std::make_pair(lower, upper);
+}
+
+template<typename T>
+void matrix<T>::fill_decomposition(matrix<T>& lower, matrix<T>& upper) const {
     for (size_t row_ = 0; row_ < row_number_; row_++) {
         for (size_t col_ = 0; col_ < col_number_; col_++) {
             if (row_ <= col_) {
-                upper[row_][col_] = data[row_][col_];
-                for (size_t variate_row = 0; variate_row < row_; variate_row++) {
-                    upper[row_][col_] -= lower[row_][variate_row] * upper[variate_row][col_];
-                }
+                fill_upper_iteration(lower, upper, row_, col_);
             } else {
-                lower[row_][col_] = data[row_][col_] / upper[col_][col_];
-                for (size_t variate_col = 0; variate_col < col_; variate_col++) {
-                    lower[row_][col_] -= lower[row_][variate_col] * upper[variate_col][col_] / upper[col_][col_];
-                }
+                fill_lower_iteration(lower, upper, row_, col_);
             }
         }
     }
-    return std::make_pair(lower, upper);
+}
+
+template<typename T>
+void matrix<T>::fill_lower_iteration(matrix<T> &lower, const matrix<T> &upper, size_t row_, size_t col_) const {
+    lower[row_][col_] = data[row_][col_] / upper[col_][col_];
+    for (size_t variate_col = 0; variate_col < col_; variate_col++) {
+        lower[row_][col_] -= lower[row_][variate_col] * upper[variate_col][col_] / upper[col_][col_];
+    }
+}
+
+template<typename T>
+void matrix<T>::fill_upper_iteration(const matrix<T> &lower, matrix<T> &upper, size_t row_, size_t col_) const {
+    upper[row_][col_] = data[row_][col_];
+    for (size_t variate_row = 0; variate_row < row_; variate_row++) {
+        upper[row_][col_] -= lower[row_][variate_row] * upper[variate_row][col_];
+    }
+}
+
+template<typename T>
+void matrix<T>::initialize_lower() const {
+    for (size_t row_ = 0; row_ < row_number_; row_++) {
+        for (size_t col_ = 0; col_ < col_number_; col_++) {
+            if (row_ == col_) {
+                data[row_][row_] = static_cast<T>(1);
+            }
+        }
+    }
 }
 
 template <typename T>
