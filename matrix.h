@@ -39,7 +39,7 @@ public:
     const row& operator[](const size_t row_index) const { return data[row_index]; }
 
     matrix<T>& operator=(const matrix& another_matrix);
-    matrix<T>& operator=(matrix&& another_matrix);
+    matrix<T>& operator=(matrix&& another_matrix) noexcept;
 
     matrix<T>& operator+=(const matrix<T>& another_matrix);
     matrix<T>& operator-=(const matrix<T>& another_matrix);
@@ -60,6 +60,8 @@ public:
 
     T get_determinant() const;
         std::pair<matrix<T>, matrix<T>> decomposition() const;
+
+    void print() const;
     ~matrix();
 
 private:
@@ -111,7 +113,7 @@ matrix<T>& matrix<T>::operator=(const matrix& another_matrix){
 }
 
 template <typename T>
-matrix<T>& matrix<T>::operator=(matrix&& another_matrix){
+matrix<T>& matrix<T>::operator=(matrix&& another_matrix) noexcept{
     if (this == &another_matrix)
         return *this;
     free_data();
@@ -369,6 +371,16 @@ std::pair<matrix<T>, matrix<T>> matrix<T>::decomposition() const {
         }
     }
     return std::make_pair(lower, upper);
+}
+
+template <typename T>
+void matrix<T>::print() const {
+    for (size_t row_ = 0; row_ < row_number_; row_++) {
+        for (size_t col_ = 0; col_ < col_number_; col_++) {
+            std::cout << data[row_][col_] << " ";
+        }
+        std::cout << std::endl;
+    }
 }
 
 #endif //CIRCUITS_MATRIX_H

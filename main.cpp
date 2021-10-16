@@ -1,5 +1,7 @@
 #include <iostream>
+#include <sstream>
 #include "matrix.h"
+#include "circuit.h"
 
 int main() {
     size_t row_number = 3, col_number = 3;
@@ -21,5 +23,11 @@ int main() {
         }
         std::cout << std::endl;
     }
+    std::string inp;
+    std::getline(std::cin, inp);
+//    std::stringstream inp_ss(inp);
+
+    circuit cir(inp);
+    cir.calculate();
     return 0;
 }
