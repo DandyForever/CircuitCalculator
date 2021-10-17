@@ -66,12 +66,16 @@ void circuit::calculate_edge_current() {
 
 std::string circuit::get_edge_current_answer() {
     std::stringstream answer;
-    for (graph::edge edge_index = 0; edge_index < edge_current_matrix.get_row_number(); edge_index++) {
-        auto [incoming_vertex, outcoming_vertex] = circuit_graph.get_tied_vertices(edge_index);
-        answer << incoming_vertex + 1 << " -- " << outcoming_vertex + 1 << ": " <<
-                    -edge_current_matrix[edge_index][0] << " A; ";
+    modify_single_edge_current_answer(answer, 0);
+    for (graph::edge edge_index = 1; edge_index < edge_current_matrix.get_row_number(); edge_index++) {
+        answer << " ";
+        modify_single_edge_current_answer(answer, edge_index);
     }
     return answer.str();
 }
-// 1 -- 2, 4.0; 1 -- 3, 10.0; 1 -- 4, 2.0; -12.0V; 2 -- 3, 60.0; 2 -- 4, 22.0; 3 -- 4, 5.0;
-// 1 -- 2: -0.442958 A; 1 -- 3: -0.631499 A; 1 -- 4: 1.07446 A; 2 -- 3: -0.0757193 A; 2 -- 4: -0.367239 A; 3 -- 4: -0.707219 A;
+
+void circuit::modify_single_edge_current_answer(std::stringstream &answer, graph::edge edge) {
+    auto [incoming_vertex, outcoming_vertex] = circuit_graph.get_tied_vertices(edge);
+    answer << incoming_vertex + 1 << " -- " << outcoming_vertex + 1 << ": " <<
+           -edge_current_matrix[edge][0] << " A;";
+}

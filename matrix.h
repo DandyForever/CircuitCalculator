@@ -58,12 +58,13 @@ public:
         std::pair<matrix<T>, matrix<T>> get_decomposition() const;
 
     void print() const;
+    bool is_equal(const matrix<T>& another_matrix) const;
     ~matrix();
 
 private:
     row* data;
-    size_t row_number_;
-    size_t col_number_;
+    size_t row_number_ = 0;
+    size_t col_number_ = 0;
 
         void free_data();
 
@@ -73,6 +74,8 @@ private:
         void fill_decomposition(matrix<T> &lower, matrix<T> &upper) const;
             void fill_upper_iteration(const matrix<T> &lower, matrix<T> &upper, size_t row_, size_t col_) const;
             void fill_lower_iteration(matrix<T> &lower, const matrix<T> &upper, size_t row_, size_t col_) const;
+
+    bool is_equal(T matrix_element, T another_matrix_element) const;
 };
 
 template <typename T>
@@ -91,13 +94,14 @@ matrix<T>::matrix(size_t row_number, size_t col_number):
 
 template <typename T>
 matrix<T>::matrix(const matrix<T>& another_matrix):
-    matrix(another_matrix.row_number_, another_matrix.col_number_)
+    data(new row[another_matrix.row_number_]),
+    row_number_(another_matrix.row_number_),
+    col_number_(another_matrix.col_number_)
 {
-        for (size_t row_ = 0; row_ < row_number_; row_++) {
-            for (size_t col_ = 0; col_ < col_number_; col_++) {
-                data[row_][col_] = another_matrix[row_][col_];
-            }
-        }
+    for (size_t row_ = 0; row_ < row_number_; row_++) {
+        data[row_].allocate_data(col_number_);
+        std::copy(another_matrix[row_].data, another_matrix[row_].data + col_number_, data[row_].data);
+    }
 }
 
 template <typename T>
@@ -340,6 +344,7 @@ void matrix<T>::initialize_lower() const {
 
 template <typename T>
 void matrix<T>::print() const {
+    std::cout << row_number_ << " " << col_number_ << std::endl;
     for (size_t row_ = 0; row_ < row_number_; row_++) {
         for (size_t col_ = 0; col_ < col_number_; col_++) {
             std::cout << data[row_][col_] << " ";
@@ -347,5 +352,28 @@ void matrix<T>::print() const {
         std::cout << std::endl;
     }
 }
+
+template <typename T>
+bool matrix<T>::is_equal(const matrix<T>& another_matrix) const {
+    if (!is_equal_size(another_matrix))
+        return false;
+
+    for (size_t row_ = 0; row_ < row_number_; row_++) {
+        for (size_t col_ = 0; col_ < col_number_; col_++) {
+            if (!is_equal(data[row_][col_], another_matrix[row_][col_]))
+                return false;
+        }
+    }
+    return true;
+}
+
+template <typename T>
+bool matrix<T>::is_equal(T matrix_element, T another_matrix_element) const {
+    return matrix_element == another_matrix_element;
+}
+template <>
+bool matrix<double>::is_equal(double matrix_element, double another_matrix_element) const;
+template <>
+bool matrix<float>::is_equal(float matrix_element, float another_matrix_element) const;
 
 #endif //CIRCUITS_MATRIX_H
