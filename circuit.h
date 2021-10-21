@@ -28,7 +28,7 @@ private:
 
     std::pair<std::vector<double>, std::vector<double>> fill_circuit_graph(input_parser &parser);
 
-    void modify_single_edge_current_answer(std::stringstream &answer, unsigned long long int edge_index);
+    void modify_single_edge_current_answer(std::stringstream &answer, graph::edge edge_index);
 };
 
 
