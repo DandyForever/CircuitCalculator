@@ -13,6 +13,10 @@ public:
     void calculate_edge_current();
     std::string get_edge_current_answer();
 
+    class ZeroResistanceException : public std::exception {
+        const char* what () const throw () { return "Zero resistance not supported!"; }
+    };
+
 private:
     matrix<double> conductivity_matrix{};
     matrix<double> emf_matrix{};
@@ -29,6 +33,7 @@ private:
     std::pair<std::vector<double>, std::vector<double>> fill_circuit_graph(input_parser &parser);
 
     void modify_single_edge_current_answer(std::stringstream &answer, graph::edge edge_index);
+    void check_resistance(double resistance) const;
 };
 
 

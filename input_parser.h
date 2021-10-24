@@ -20,6 +20,16 @@ public:
     state get_current_edge_info() const { return current_edge_info; }
     bool is_emf_included() const { return is_previous_has_emf; }
 
+    class InvalidInputException : std::exception {
+    public:
+        InvalidInputException(char symbol): symbol(symbol){}
+        char get_character() const { return symbol; }
+    private:
+        char symbol;
+        const char* what () const throw () { return "Unexpected character in input line!"; }
+
+    };
+
 private:
     std::stringstream input;
     state current_edge_info;
@@ -31,6 +41,12 @@ private:
     void fill_emf();
 
     const char EMF_dimension = 'V';
+    const char Vertex_separator = '-';
+    const char Resistance_separator = ',';
+    const char Characteristic_separator = ';';
+
+    bool check_symbol(const char separator);
+    void check_numeric();
 };
 
 

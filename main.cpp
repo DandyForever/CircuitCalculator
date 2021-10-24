@@ -7,6 +7,7 @@ int main() {
     std::string inp;
     std::string input_string;
     while (std::getline(std::cin, inp)) {
+        inp.push_back(' ');
         input_string.insert(input_string.length(), inp);
     }
     circuit cir(input_string);

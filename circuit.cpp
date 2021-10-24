@@ -11,12 +11,18 @@ std::pair<std::vector<double>, std::vector<double>> circuit::fill_circuit_graph(
     while (!parser.is_eof()) {
         parser.make_iteration();
         auto [incoming, outcoming, resistance, emf] = parser.get_current_edge_info();
+        check_resistance(resistance);
         edge_resistance.push_back(resistance);
         circuit_graph.add_edge(outcoming - 1, incoming - 1);
         edge_emf.push_back(parser.is_emf_included() ? emf : 0.);
     }
 
     return {edge_resistance, edge_emf};
+}
+
+void circuit::check_resistance(double resistance) const {
+    if (std::abs(resistance) < 1e-9)
+        throw ZeroResistanceException();
 }
 
 void circuit::fill_circuit_matrices(const std::vector<double> &edge_resistance,
@@ -60,7 +66,7 @@ void circuit::calculate_edge_current() {
     auto flow_matrix = incidence_matrix * conductivity_matrix * incidence_matrix.transpose();
     flow_matrix = flow_matrix.inverse() * incidence_matrix * conductivity_matrix * emf_matrix;
     auto voltage_matrix = incidence_matrix.transpose() * flow_matrix;
-    edge_current_matrix = conductivity_matrix * (emf_matrix - voltage_matrix);
+    edge_current_matrix = conductivity_matrix * (voltage_matrix - emf_matrix);
 }
 
 
@@ -68,7 +74,7 @@ std::string circuit::get_edge_current_answer() {
     std::stringstream answer;
     modify_single_edge_current_answer(answer, 0);
     for (graph::edge edge_index = 1; edge_index < edge_current_matrix.get_row_number(); edge_index++) {
-        answer << " ";
+        answer << '\n';
         modify_single_edge_current_answer(answer, edge_index);
     }
     return answer.str();
