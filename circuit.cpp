@@ -12,10 +12,15 @@ std::pair<std::vector<double>, std::vector<double>> circuit::fill_circuit_graph(
         parser.make_iteration();
         auto [incoming, outcoming, resistance, emf] = parser.get_current_edge_info();
         check_resistance(resistance);
-        edge_resistance.push_back(resistance);
-        circuit_graph.add_edge(outcoming - 1, incoming - 1);
-        edge_emf.push_back(parser.is_emf_included() ? emf : 0.);
+        if (circuit_graph.add_edge(outcoming - 1, incoming - 1)) {
+            edge_emf.push_back(parser.is_emf_included() ? emf : 0.);
+            edge_resistance.push_back(resistance);
+        } else {
+            loop_resistance.push_back(resistance);
+            loop_emf.push_back(parser.is_emf_included() ? emf : 0.);
+        }
     }
+    circuit_graph.check_connectivity();
 
     return {edge_resistance, edge_emf};
 }
@@ -29,6 +34,8 @@ void circuit::fill_circuit_matrices(const std::vector<double> &edge_resistance,
                                     const std::vector<double> &edge_voltage) {
     size_t vertex_number = circuit_graph.get_vertex_number();
     size_t edge_number = circuit_graph.get_edge_number();
+    if (!edge_number)
+        return;
     fill_conductivity_matrix(edge_resistance, edge_number);
     fill_emf_matrix(edge_voltage, edge_number);
     fill_incidence_matrix(vertex_number, edge_number);
@@ -66,12 +73,21 @@ void circuit::calculate_edge_current() {
     auto flow_matrix = incidence_matrix * conductivity_matrix * incidence_matrix.transpose();
     flow_matrix = flow_matrix.inverse() * incidence_matrix * conductivity_matrix * emf_matrix;
     auto voltage_matrix = incidence_matrix.transpose() * flow_matrix;
-    edge_current_matrix = conductivity_matrix * (voltage_matrix - emf_matrix);
+    edge_current_matrix = conductivity_matrix * (emf_matrix - voltage_matrix);
+    calculate_loop_current();
 }
 
+void circuit::calculate_loop_current() {
+    for (size_t loop_index = 0; loop_index < loop_resistance.size(); loop_index++) {
+        loop_current.push_back(loop_emf[loop_index] / loop_resistance[loop_index]);
+    }
+}
 
 std::string circuit::get_edge_current_answer() {
     std::stringstream answer;
+    modify_loops_current_answer(answer);\
+    if (!conductivity_matrix.get_row_number())
+        return answer.str();
     modify_single_edge_current_answer(answer, 0);
     for (graph::edge edge_index = 1; edge_index < edge_current_matrix.get_row_number(); edge_index++) {
         answer << '\n';
@@ -80,8 +96,16 @@ std::string circuit::get_edge_current_answer() {
     return answer.str();
 }
 
+void circuit::modify_loops_current_answer(std::stringstream &answer) const {
+    auto& loops = circuit_graph.get_loops();
+    for (size_t vertex_index = 0; vertex_index < loops.size(); vertex_index++) {
+        answer << loops[vertex_index] + 1 << " -- " << loops[vertex_index] + 1 << ": " <<
+               loop_current[vertex_index] << " A;" << '\n';
+    }
+}
+
 void circuit::modify_single_edge_current_answer(std::stringstream &answer, graph::edge edge) {
     auto [incoming_vertex, outcoming_vertex] = circuit_graph.get_tied_vertices(edge);
     answer << incoming_vertex + 1 << " -- " << outcoming_vertex + 1 << ": " <<
-           -edge_current_matrix[edge][0] << " A;";
+           edge_current_matrix[edge][0] << " A;";
 }

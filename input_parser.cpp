@@ -22,8 +22,10 @@ bool input_parser::check_symbol(const char separator) {
 }
 
 void input_parser::check_numeric() {
-    if (!isdigit(input.peek()) && input.peek() != EOF)
-        throw InvalidInputException(input.peek());
+    if (!isdigit(input.peek()) && input.peek() != '-' && input.peek() != EOF) {
+        std::cout << "Unexpected character: " << static_cast<char>(input.peek()) << std::endl;
+        throw InvalidInputException();
+    }
 }
 
 void input_parser::fill_emf() {

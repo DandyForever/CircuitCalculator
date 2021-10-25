@@ -21,13 +21,7 @@ public:
     bool is_emf_included() const { return is_previous_has_emf; }
 
     class InvalidInputException : std::exception {
-    public:
-        InvalidInputException(char symbol): symbol(symbol){}
-        char get_character() const { return symbol; }
-    private:
-        char symbol;
         const char* what () const throw () { return "Unexpected character in input line!"; }
-
     };
 
 private:
