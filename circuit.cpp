@@ -20,9 +20,15 @@ std::pair<std::vector<double>, std::vector<double>> circuit::fill_circuit_graph(
             loop_emf.push_back(parser.is_emf_included() ? emf : 0.);
         }
     }
+    check_empty_input(edge_resistance);
     circuit_graph.check_connectivity();
 
     return {edge_resistance, edge_emf};
+}
+
+void circuit::check_empty_input(const std::vector<double> &edge_resistance) const {
+    if (edge_resistance.empty() && loop_resistance.empty())
+        throw EmptyInputException();
 }
 
 void circuit::check_resistance(double resistance) const {

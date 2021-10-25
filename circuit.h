@@ -17,6 +17,10 @@ public:
         const char* what () const throw () { return "Zero resistance not supported!"; }
     };
 
+    class EmptyInputException : public std::exception {
+        const char* what () const throw () { return "Input is empty!"; }
+    };
+
 private:
     matrix<double> conductivity_matrix{};
     matrix<double> emf_matrix{};
@@ -41,6 +45,8 @@ private:
     void calculate_loop_current();
 
     void modify_loops_current_answer(std::stringstream &answer) const;
+
+    void check_empty_input(const std::vector<double> &edge_resistance) const;
 };
 
 

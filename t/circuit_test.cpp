@@ -205,3 +205,8 @@ TEST(CalculationLoopsTest, CalculationLoopsDifficultTest) {
     std::string answer("4 -- 4: 100 A;\n1 -- 2: 0.442958 A;\n1 -- 3: 0.631499 A;\n1 -- 4: -1.07446 A;\n2 -- 3: 0.0757193 A;\n2 -- 4: 0.367239 A;\n3 -- 4: 0.707219 A;");
     EXPECT_EQ(answer, test_circuit.get_edge_current_answer());
 }
+
+TEST(EmptyInputTest, EmptyInputTest) {
+    std::string inp("");
+    EXPECT_THROW(circuit test_circuit(inp), circuit::EmptyInputException);
+}
