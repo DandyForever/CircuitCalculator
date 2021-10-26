@@ -14,11 +14,14 @@ public:
     std::string get_edge_current_answer();
 
     class ZeroResistanceException : public std::exception {
-        const char* what () const throw () { return "Zero resistance not supported!"; }
+        const char* what () const throw () { return "Invalid input: Unsupported zero resistance was parsed!"; }
     };
 
     class EmptyInputException : public std::exception {
-        const char* what () const throw () { return "Input is empty!"; }
+        const char* what () const throw () { return "Invalid input: Empty input was parsed!"; }
+    };
+    class ZeroVerticesException : public std::exception {
+        const char* what () const throw () { return "Invalid input: Unsupported zero vertex was parsed!"; }
     };
 
 private:
@@ -47,6 +50,8 @@ private:
     void modify_loops_current_answer(std::stringstream &answer) const;
 
     void check_empty_input(const std::vector<double> &edge_resistance) const;
+
+    void check_vertices(unsigned long long int incoming, unsigned long long int outcoming) const;
 };
 
 

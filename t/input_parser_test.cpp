@@ -182,3 +182,24 @@ TEST(ParserThrowsInvalidInputExceptionTest, UnexpectedCharacterBeforeSecondSemic
     parser.make_iteration();
     EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
 }
+
+TEST(ParserThrowsInvalidInputExceptionTest, OnlyDashInputTest) {
+    input_parser parser("-");
+    EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
+}
+
+TEST(ParserThrowsInvalidInputExceptionTest, DashBeforeVoltageInputTest) {
+    input_parser parser("1 -- 2, 4.0; - 2.0V; 2 -- 1, 4.0;");
+    EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
+}
+
+TEST(ParserThrowsInvalidInputExceptionTest, DashBeforeResistanceInputTest) {
+    input_parser parser("1 -- 2, - 4.0; 2.0V;");
+    EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
+}
+
+TEST(ParserThrowsInvalidInputExceptionTest, DashEOFTest) {
+    input_parser parser("1 -- 2, 4.0; 2.0V;-");
+    parser.make_iteration();
+    EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
+}

@@ -11,6 +11,7 @@ std::pair<std::vector<double>, std::vector<double>> circuit::fill_circuit_graph(
     while (!parser.is_eof()) {
         parser.make_iteration();
         auto [incoming, outcoming, resistance, emf] = parser.get_current_edge_info();
+        check_vertices(incoming, outcoming);
         check_resistance(resistance);
         if (circuit_graph.add_edge(outcoming - 1, incoming - 1)) {
             edge_emf.push_back(parser.is_emf_included() ? emf : 0.);
@@ -24,6 +25,11 @@ std::pair<std::vector<double>, std::vector<double>> circuit::fill_circuit_graph(
     circuit_graph.check_connectivity();
 
     return {edge_resistance, edge_emf};
+}
+
+void circuit::check_vertices(graph::vertex incoming, graph::vertex outcoming) const {
+    if (!incoming || !outcoming)
+        throw ZeroVerticesException();
 }
 
 void circuit::check_empty_input(const std::vector<double> &edge_resistance) const {

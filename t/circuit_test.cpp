@@ -210,3 +210,13 @@ TEST(EmptyInputTest, EmptyInputTest) {
     std::string inp("");
     EXPECT_THROW(circuit test_circuit(inp), circuit::EmptyInputException);
 }
+
+TEST(CircuitThrowsZeroVerticesExceptionTest, ZeroVerticesTest) {
+    std::string inp("0 -- 0, 4.0; 2.0V;");
+    EXPECT_THROW(circuit test_circuit(inp), circuit::ZeroVerticesException);
+}
+
+TEST(CircuitThrowsZeroVerticesExceptionTest, ZeroVertexTest) {
+    std::string inp("0 -- 1, 4.0; 2.0V;");
+    EXPECT_THROW(circuit test_circuit(inp), circuit::ZeroVerticesException);
+}
