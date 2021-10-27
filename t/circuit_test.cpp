@@ -54,7 +54,7 @@ TEST(CalculationTest, TwoEMFCodirectionalParallelTest) {
     std::string inp("1 -- 2, 5; 6.0V; 2 -- 3, 10; -30.0V; 2 -- 4, 5; 4 -- 3, 5; 3 -- 1, 5;");
     circuit test_circuit(inp);
     test_circuit.calculate_edge_current();
-    std::string answer("1 -- 2: -0.6 A;\n2 -- 3: -1.8 A;\n2 -- 4: 1.2 A;\n4 -- 3: 1.2 A;\n3 -- 1: -0.6 A;");
+    std::string answer("1 -- 2: -0.6 A;\n2 -- 3: -1.8 A;\n2 -- 4: 1.2 A;\n3 -- 1: -0.6 A;\n4 -- 3: 1.2 A;");
     EXPECT_EQ(answer, test_circuit.get_edge_current_answer());
 }
 
@@ -62,7 +62,7 @@ TEST(CalculationTest, TwoEMFCounterdirectionalParallelTest) {
     std::string inp("1 -- 2, 5; 6.0V; 2 -- 3, 10; 30.0V; 2 -- 4, 5; 4 -- 3, 5; 3 -- 1, 5;");
     circuit test_circuit(inp);
     test_circuit.calculate_edge_current();
-    std::string answer("1 -- 2: 1.4 A;\n2 -- 3: 2.2 A;\n2 -- 4: -0.8 A;\n4 -- 3: -0.8 A;\n3 -- 1: 1.4 A;");
+    std::string answer("1 -- 2: 1.4 A;\n2 -- 3: 2.2 A;\n2 -- 4: -0.8 A;\n3 -- 1: 1.4 A;\n4 -- 3: -0.8 A;");
     EXPECT_EQ(answer, test_circuit.get_edge_current_answer());
 }
 
@@ -70,7 +70,7 @@ TEST(CalculationTest, CalculationTest2) {
     std::string inp("1 -- 2, 50; -75.0V; 2 -- 3, 50; 1 -- 3, 150; 1 -- 4, 100; -100.0V; 4 -- 3, 50;");
     circuit test_circuit(inp);
     test_circuit.calculate_edge_current();
-    std::string answer("1 -- 2: -0.142857 A;\n2 -- 3: -0.142857 A;\n1 -- 3: 0.404762 A;\n1 -- 4: -0.261905 A;\n4 -- 3: -0.261905 A;");
+    std::string answer("1 -- 2: -0.142857 A;\n1 -- 3: 0.404762 A;\n1 -- 4: -0.261905 A;\n2 -- 3: -0.142857 A;\n4 -- 3: -0.261905 A;");
     EXPECT_EQ(answer, test_circuit.get_edge_current_answer());
 }
 
@@ -78,7 +78,7 @@ TEST(CalculationTest, CalculationTest3) {
     std::string inp("1 -- 2, 50; -75.0V; 2 -- 3, 50; 1 -- 3, 150; 1 -- 4, 100; 100.0V; 4 -- 3, 50;");
     circuit test_circuit(inp);
     test_circuit.calculate_edge_current();
-    std::string answer("1 -- 2: -0.714286 A;\n2 -- 3: -0.714286 A;\n1 -- 3: 0.0238095 A;\n1 -- 4: 0.690476 A;\n4 -- 3: 0.690476 A;");
+    std::string answer("1 -- 2: -0.714286 A;\n1 -- 3: 0.0238095 A;\n1 -- 4: 0.690476 A;\n2 -- 3: -0.714286 A;\n4 -- 3: 0.690476 A;");
     EXPECT_EQ(answer, test_circuit.get_edge_current_answer());
 }
 
@@ -87,26 +87,34 @@ TEST(CircuitThrowsZeroResistanceExceptionTest, ZeroResistanceTest) {
     EXPECT_THROW(circuit test_circuit(inp), circuit::ZeroResistanceException);
 }
 
-TEST(CircuitThrowsIncoherentGraphExceptionTest, IncoherentSimpleCircuitTest) {
+TEST(IncoherentCircuitTest, IncoherentSimpleCircuitTest) {
     std::string inp("1 -- 1, 1.0; 2.0V; 2 -- 2, 1.0; 2.0V;");
-    EXPECT_THROW(circuit test_circuit(inp), graph::IncoherentGraphException);
+    circuit test_circuit(inp);
+    test_circuit.calculate_edge_current();
+    std::string answer("1 -- 1: 2 A;\n2 -- 2: 2 A;");
+    EXPECT_EQ(answer, test_circuit.get_edge_current_answer());
 }
 
-TEST(CircuitThrowsIncoherentGraphExceptionTest, IncoherentCircuitTest) {
-    std::string inp("1 -- 2, 1.0; 2.0V; 2 -- 1, 1.0; 2.0V; 3 -- 4, 1.0; 2.0V; 4 -- 3, 1.0; 2.0V");
-    EXPECT_THROW(circuit test_circuit(inp), graph::IncoherentGraphException);
+TEST(IncoherentCircuitTest, IncoherentCircuitTest) {
+    std::string inp("1 -- 2, 1.0; 2.0V; 2 -- 1, 1.0; 2.0V; 3 -- 4, 1.0; 2.0V; 4 -- 3, 1.0; 2.0V");circuit test_circuit(inp);
+    test_circuit.calculate_edge_current();
+    std::string answer("1 -- 2: 2 A;\n2 -- 1: 2 A;\n3 -- 4: 2 A;\n4 -- 3: 2 A;");
+    EXPECT_EQ(answer, test_circuit.get_edge_current_answer());
 }
 
-TEST(CircuitThrowsIncoherentGraphExceptionTest, NotAllVerticesInInputTest) {
+TEST(IncoherentCircuitTest, NotAllVerticesInInputTest) {
     std::string inp("2 -- 3, 1.0;");
-    EXPECT_THROW(circuit test_circuit(inp), graph::IncoherentGraphException);
+    circuit test_circuit(inp);
+    test_circuit.calculate_edge_current();
+    std::string answer("2 -- 3: 0 A;");
+    EXPECT_EQ(answer, test_circuit.get_edge_current_answer());
 }
 
 TEST(CalculationLoopsTest, CalculationLoopsTrivialTest) {
     std::string inp("1 -- 1, 1.0; 2.0V;");
     circuit test_circuit(inp);
     test_circuit.calculate_edge_current();
-    std::string answer("1 -- 1: 2 A;\n");
+    std::string answer("1 -- 1: 2 A;");
     EXPECT_EQ(answer, test_circuit.get_edge_current_answer());
 }
 
