@@ -45,3 +45,19 @@ $ ./input_parser_test
 $ cmake --build . --target circuit_test
 $ ./circuit_test
 ```
+#### Big Circuit tests
+```
+$ cmake --build . --target big_circuit_test
+$ ./big_circuit_test
+```
+##### Description
+*Big Circuit test* consists of 3 families of tests on large circuits:
+ * *Fully coherent circuits* consisting of *n* vertices, where *n* varies
+from 10 to 100 with step 10
+ * *Fully coherent subcircuits* are circuits consisting of *m* fully
+coherent subcircuits with *n* vertices, where *m* is *{2, 5, 10, 50}* and *n*
+varies from 10 to 50 with step 10
+ * *Consistent circuits* consisting of *n* vertices, where *n* varies from
+10 to 100 with step 10
+
+**Running all tests takes ~15 minutes**

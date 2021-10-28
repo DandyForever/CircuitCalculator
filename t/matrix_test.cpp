@@ -204,3 +204,17 @@ TEST(InverseMatrixTest, InverseThrowsExceptionTest) {
     matrix<double> test_matrix(2, 3);
     EXPECT_THROW(test_matrix.inverse(), std::runtime_error);
 }
+
+//TEST(BadAllocationTest, ConstructorThrowsBadAllocationTest) {
+//    EXPECT_THROW(matrix<double> test_matrix(100000, 100000), std::bad_alloc);
+//}
+//
+//TEST(BadAllocationTest, CopyConstructorThrowsBadAllocationTest) {
+//    matrix<double> test_matrix(50000, 50000);
+//    EXPECT_THROW(matrix<double> copy_test_matrix(test_matrix), std::bad_alloc);
+//}
+//
+//TEST(BadAllocationTest, CopyAssignmentThrowsBadAllocationTest) {
+//    matrix<double> test_matrix(50000, 50000), copy_test_matrix;
+//    EXPECT_THROW(copy_test_matrix = test_matrix, std::bad_alloc);
+//}

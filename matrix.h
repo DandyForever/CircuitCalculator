@@ -83,9 +83,20 @@ matrix<T>::matrix(size_t row_number, size_t col_number):
     row_number_(row_number),
     col_number_(col_number)
 {
-    data = new row[row_number];
+    try {
+        data = new row[row_number];
+    } catch (std::bad_alloc&) {
+        std::cout << "Matrix constructor failed: not enough memory" << std::endl;
+        throw;
+    }
     for (size_t row_ = 0; row_ < row_number; row_++) {
-        data[row_].allocate_data(col_number);
+        try {
+            data[row_].allocate_data(col_number);
+        } catch (std::bad_alloc&) {
+            free_data();
+            std::cout << "Matrix constructor failed: not enough memory" << std::endl;
+            throw;
+        }
         for (size_t col_ = 0; col_ < col_number_; col_++) {
             data[row_][col_] = static_cast<T>(0);
         }
@@ -94,12 +105,23 @@ matrix<T>::matrix(size_t row_number, size_t col_number):
 
 template <typename T>
 matrix<T>::matrix(const matrix<T>& another_matrix):
-    data(new row[another_matrix.row_number_]),
     row_number_(another_matrix.row_number_),
     col_number_(another_matrix.col_number_)
 {
+    try {
+        data = new row[another_matrix.row_number_];
+    } catch (std::bad_alloc&) {
+        std::cout << "Copy constructor failed: not enough memory" << std::endl;
+        throw;
+    }
     for (size_t row_ = 0; row_ < row_number_; row_++) {
-        data[row_].allocate_data(col_number_);
+        try {
+            data[row_].allocate_data(col_number_);
+        } catch (std::bad_alloc&) {
+            free_data();
+            std::cout << "Copy constructor failed: not enough memory" << std::endl;
+            throw;
+        }
         std::copy(another_matrix[row_].data, another_matrix[row_].data + col_number_, data[row_].data);
     }
 }
@@ -114,16 +136,21 @@ matrix<T>::matrix(matrix&& another_matrix) noexcept:
 }
 
 template <typename T>
-matrix<T>& matrix<T>::operator=(const matrix& another_matrix){
+matrix<T>& matrix<T>::operator=(const matrix& another_matrix) {
     if (this == &another_matrix)
         return *this;
     this->~matrix();
-    new(this) matrix(another_matrix);
+    try {
+        new(this) matrix(another_matrix);
+    } catch (std::bad_alloc&) {
+        std::cout << "Copy assignment failed: not enough memory" << std::endl;
+        throw;
+    }
     return *this;
 }
 
 template <typename T>
-matrix<T>& matrix<T>::operator=(matrix&& another_matrix) noexcept{
+matrix<T>& matrix<T>::operator=(matrix&& another_matrix) noexcept {
     if (this == &another_matrix)
         return *this;
     free_data();
