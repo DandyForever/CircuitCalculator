@@ -14,7 +14,7 @@ public:
     std::string get_edge_current_answer();
 
     class ZeroResistanceException : public std::exception {
-        const char* what () const throw () { return "Invalid input: Unsupported zero resistance was parsed!"; }
+        const char* what () const throw () { return "Zero resistances was replaced with 1e-9 Ohm"; }
     };
 
     class EmptyInputException : public std::exception {
@@ -44,7 +44,7 @@ private:
     std::pair<std::vector<double>, std::vector<double>> fill_circuit_graph(input_parser &parser);
 
     void modify_single_edge_current_answer(std::stringstream &answer, graph::edge edge_index, size_t subgraph_index);
-    void check_resistance(double resistance) const;
+    bool check_resistance(double& resistance) const;
 
     void calculate_loop_current();
 
@@ -64,6 +64,8 @@ private:
                                 size_t subgraph_index);
 
     void resize_subgraph_number();
+
+    const double EPS = 1e-9;
 };
 
 

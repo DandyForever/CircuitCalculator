@@ -16,11 +16,12 @@ void circuit::resize_subgraph_number() {
 
 std::pair<std::vector<double>, std::vector<double>> circuit::fill_circuit_graph(input_parser &parser) {
     std::vector<double> edge_resistance, edge_emf;
+    bool is_zero_resistance_exist = false;
     while (!parser.is_eof()) {
         parser.make_iteration();
         auto [incoming, outcoming, resistance, emf] = parser.get_current_edge_info();
         check_vertices(incoming, outcoming);
-        check_resistance(resistance);
+        is_zero_resistance_exist |= check_resistance(resistance);
         if (circuit_graph.add_edge(outcoming - 1, incoming - 1)) {
             edge_emf.push_back(parser.is_emf_included() ? emf : 0.);
             edge_resistance.push_back(resistance);
@@ -31,6 +32,9 @@ std::pair<std::vector<double>, std::vector<double>> circuit::fill_circuit_graph(
     }
     check_empty_input(edge_resistance);
     circuit_subgraphs = circuit_graph.get_coherent_subgraphs();
+    if (is_zero_resistance_exist) {
+        std::cout << "Zero resistances were replaced with " << EPS << " Ohm" << std::endl;
+    }
 
     return {edge_resistance, edge_emf};
 }
@@ -45,9 +49,12 @@ void circuit::check_empty_input(const std::vector<double> &edge_resistance) cons
         throw EmptyInputException();
 }
 
-void circuit::check_resistance(double resistance) const {
-    if (std::abs(resistance) < 1e-9)
-        throw ZeroResistanceException();
+bool circuit::check_resistance(double& resistance) const {
+    if (std::abs(resistance) < EPS) {
+        resistance += EPS;
+        return true;
+    }
+    return false;
 }
 
 void circuit::fill_circuit_matrices(const std::vector<double> &edge_resistance,

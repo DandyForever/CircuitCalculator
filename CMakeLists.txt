@@ -18,7 +18,7 @@ add_test(circuit_test circuit_test)
 add_test(big_circuit_test big_circuit_test)
 
 add_executable(complex_number_test t/complex_number_test.cpp complex_number.cpp complex_number.h)
-add_executable(matrix_test t/matrix_test.cpp matrix.cpp matrix.h)
+add_executable(matrix_test t/matrix_test.cpp matrix.cpp matrix.h complex_number.cpp complex_number.h)
 add_executable(graph_test t/graph_test.cpp graph.cpp graph.h)
 add_executable(input_parser_test t/input_parser_test.cpp input_parser.cpp input_parser.h)
 add_executable(circuit_test t/circuit_test.cpp circuit.cpp circuit.h input_parser.cpp input_parser.h graph.cpp graph.h matrix.cpp matrix.h)

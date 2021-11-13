@@ -234,3 +234,8 @@ TEST(OutputTest, PositiveRealNegativeImaginaryTest) {
     std::string answer("2-i3");
     EXPECT_EQ(output.str(), answer);
 }
+
+TEST(CastTest, StaticCastZeroTest) {
+    auto test_number = static_cast<complex_number>(0);
+    EXPECT_TRUE(test_number.is_zero());
+}

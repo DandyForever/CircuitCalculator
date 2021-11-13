@@ -1,6 +1,7 @@
 #include <gmock/gmock.h>
 
 #include "../matrix.h"
+#include "../complex_number.h"
 
 
 int fill_int_matrix(matrix<int>& matrix_to_fill) {
@@ -203,6 +204,70 @@ TEST(InverseMatrixTest, InverseMatrixTest) {
 TEST(InverseMatrixTest, InverseThrowsExceptionTest) {
     matrix<double> test_matrix(2, 3);
     EXPECT_THROW(test_matrix.inverse(), std::runtime_error);
+}
+
+TEST(ComplexMatrixTest, PlusEqualTest) {
+    matrix<complex_number> test_matrix(2, 2);
+    test_matrix[0][0] = {1, 1};
+    test_matrix[0][1] = {2, 2};
+    test_matrix[1][0] = {3, 3};
+    test_matrix[1][1] = {4, 4};
+    matrix<complex_number> add_matrix(2, 2);
+    add_matrix[0][0] = {1, 1};
+    add_matrix[0][1] = {2, 2};
+    add_matrix[1][0] = {3, 3};
+    add_matrix[1][1] = {4, 4};
+    test_matrix += add_matrix;
+    matrix<complex_number> expected_matrix(2, 2);
+    expected_matrix[0][0] = {2, 2};
+    expected_matrix[0][1] = {4, 4};
+    expected_matrix[1][0] = {6, 6};
+    expected_matrix[1][1] = {8, 8};
+    EXPECT_TRUE(test_matrix.is_equal(expected_matrix));
+}
+
+TEST(ComplexMatrixTest, MinusEqualTest) {
+    matrix<complex_number> test_matrix(2, 2);
+    test_matrix[0][0] = {1, 1};
+    test_matrix[0][1] = {2, 2};
+    test_matrix[1][0] = {3, 3};
+    test_matrix[1][1] = {4, 4};
+    matrix<complex_number> add_matrix(2, 2);
+    add_matrix[0][0] = {1, 1};
+    add_matrix[0][1] = {2, 2};
+    add_matrix[1][0] = {3, 3};
+    add_matrix[1][1] = {4, 4};
+    test_matrix -= add_matrix;
+    matrix<complex_number> expected_matrix(2, 2);
+    expected_matrix[0][0] = {0, 0};
+    expected_matrix[0][1] = {0, 0};
+    expected_matrix[1][0] = {0, 0};
+    expected_matrix[1][1] = {0, 0};
+    EXPECT_TRUE(test_matrix.is_equal(expected_matrix));
+}
+
+TEST(ComplexMatrixTest, DeterminantTest) {
+    matrix<complex_number> test_matrix(2, 2);
+    test_matrix[0][0] = {1, 0};
+    test_matrix[0][1] = {2, 2};
+    test_matrix[1][0] = {3, -1.5};
+    test_matrix[1][1] = {4, 0};
+    complex_number expected_determinant(-5, -3);
+    EXPECT_EQ(test_matrix.get_determinant(), expected_determinant);
+}
+
+TEST(ComplexMatrixTest, InverseTest) {
+    matrix<complex_number> test_matrix(2, 2);
+    test_matrix[0][0] = {1, 0};
+    test_matrix[0][1] = {2, 2};
+    test_matrix[1][0] = {3, -1.5};
+    test_matrix[1][1] = {4, 0};
+    matrix<complex_number> inversed_matrix(test_matrix.inverse());
+    test_matrix *= inversed_matrix;
+    matrix<complex_number> expected_matrix(2, 2);
+    expected_matrix[0][0] = {1, 0};
+    expected_matrix[1][1] = {1, 0};
+    EXPECT_TRUE(test_matrix.is_equal(expected_matrix));
 }
 
 //TEST(BadAllocationTest, ConstructorThrowsBadAllocationTest) {

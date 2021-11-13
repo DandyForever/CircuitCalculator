@@ -9,6 +9,10 @@ complex_number::complex_number(double real, double imaginary):
     imaginary_(imaginary)
 {}
 
+complex_number::complex_number(int real):
+        real_(real)
+{}
+
 double complex_number::get_amplitude() const {
     return real_ * real_ + imaginary_ * imaginary_;
 }

@@ -9,6 +9,7 @@ class complex_number {
 public:
     complex_number() = default;
     complex_number(double real, double imaginary);
+    complex_number(int real);
 
     double get_amplitude() const;
 

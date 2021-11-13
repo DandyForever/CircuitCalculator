@@ -84,7 +84,9 @@ TEST(CalculationTest, CalculationTest3) {
 
 TEST(CircuitThrowsZeroResistanceExceptionTest, ZeroResistanceTest) {
     std::string inp("1 -- 2, 0.0;");
-    EXPECT_THROW(circuit test_circuit(inp), circuit::ZeroResistanceException);
+    circuit test_circuit(inp);
+    test_circuit.calculate_edge_current();
+    EXPECT_EQ("1 -- 2: 0 A;", test_circuit.get_edge_current_answer());
 }
 
 TEST(IncoherentCircuitTest, IncoherentSimpleCircuitTest) {
