@@ -2,132 +2,134 @@
 
 #include "../input_parser.h"
 
-TEST(ParseTest, SingleIterationNoEMFTest) {
+TEST(DcInputTest, SingleIterationNoEMFTest) {
     input_parser parser("1 -- 2, 0.1; 1 -- 3, 0.2;");
     parser.make_iteration();
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_DOUBLE_EQ(0.1, resistance);
+    EXPECT_EQ(complex_number(0.1), resistance);
     EXPECT_FALSE(parser.is_emf_included());
     EXPECT_FALSE(parser.is_eof());
 }
 
-TEST(ParseTest, SingleIterationWithEMFTest) {
+TEST(DcInputTest, SingleIterationWithEMFTest) {
     input_parser parser("1 -- 2, 0.1; 0.5V; 1 -- 3, 0.2;");
     parser.make_iteration();
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_DOUBLE_EQ(0.1, resistance);
+    complex_number(0.1);
+    EXPECT_EQ(complex_number(0.1), resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_DOUBLE_EQ(0.5, emf);
+    EXPECT_EQ(0.5, emf);
     EXPECT_FALSE(parser.is_eof());
 }
 
-TEST(ParseTest, TwoIterationWithEMFFirstNoEMFSecondTest) {
+TEST(DcInputTest, TwoIterationWithEMFFirstNoEMFSecondTest) {
     input_parser parser("1 -- 2, 0.1; 0.5V; 1 -- 3, 0.2;");
     parser.make_iteration();
     parser.make_iteration();
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(3, incoming_vertex);
-    EXPECT_DOUBLE_EQ(0.2, resistance);
+    EXPECT_EQ(complex_number(0.2), resistance);
     EXPECT_FALSE(parser.is_emf_included());
     EXPECT_TRUE(parser.is_eof());
 }
 
-TEST(ParseTest, TwoIterationNoEMFFirstWithEMFSecondTest) {
+TEST(DcInputTest, TwoIterationNoEMFFirstWithEMFSecondTest) {
     input_parser parser("1 -- 2, 0.1; 1 -- 3, 0.2; 0.6V;");
     parser.make_iteration();
     parser.make_iteration();
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(3, incoming_vertex);
-    EXPECT_DOUBLE_EQ(0.2, resistance);
+    EXPECT_EQ(complex_number(0.2), resistance);
     EXPECT_TRUE(parser.is_emf_included());
     EXPECT_EQ(0.6, emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
-TEST(ParseTest, TwoIterationWithEMFTest) {
+TEST(DcInputTest, TwoIterationWithEMFTest) {
     input_parser parser("1 -- 2, 0.1; 0.5V; 1 -- 3, 0.2; 0.6V;");
     parser.make_iteration();
     parser.make_iteration();
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(3, incoming_vertex);
-    EXPECT_DOUBLE_EQ(0.2, resistance);
+    EXPECT_EQ(complex_number(0.2), resistance);
     EXPECT_TRUE(parser.is_emf_included());
     EXPECT_EQ(0.6, emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
-TEST(ParseTest, SingleDashBetweenVerticesTest) {
+TEST(SkipSyntaxTest, SingleDashBetweenVerticesTest) {
     input_parser parser("1 - 2, 0.1;");
     parser.make_iteration();
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_DOUBLE_EQ(0.1, resistance);
+    EXPECT_EQ(complex_number(0.1), resistance);
     EXPECT_FALSE(parser.is_emf_included());
     EXPECT_TRUE(parser.is_eof());
 }
 
-TEST(ParseTest, NoDashBetweenVerticesTest) {
+TEST(SkipSyntaxTest, NoDashBetweenVerticesTest) {
     input_parser parser("1 2, 0.1;");
     parser.make_iteration();
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_DOUBLE_EQ(0.1, resistance);
+    EXPECT_EQ(complex_number(0.1), resistance);
     EXPECT_FALSE(parser.is_emf_included());
     EXPECT_TRUE(parser.is_eof());
 }
 
-TEST(ParseTest, NoCommaBeforeResistanceTest) {
+TEST(SkipSyntaxTest, NoCommaBeforeResistanceTest) {
     input_parser parser("1 -- 2 0.1;");
     parser.make_iteration();
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_DOUBLE_EQ(0.1, resistance);
+    EXPECT_EQ(complex_number(0.1), resistance);
     EXPECT_FALSE(parser.is_emf_included());
     EXPECT_TRUE(parser.is_eof());
 }
 
-TEST(ParseTest, NoSemicolonAfterResistanceTest) {
+TEST(SkipSyntaxTest, NoSemicolonAfterResistanceTest) {
     input_parser parser("1 -- 2, 0.1");
     parser.make_iteration();
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_DOUBLE_EQ(0.1, resistance);
+    EXPECT_EQ(complex_number(0.1), resistance);
     EXPECT_FALSE(parser.is_emf_included());
     EXPECT_TRUE(parser.is_eof());
 }
 
-TEST(ParseTest, NoSemicolonAfterEMFTest) {
+TEST(SkipSyntaxTest, NoSemicolonAfterEMFTest) {
     input_parser parser("1 -- 2, 0.1; 0.5V");
     parser.make_iteration();
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_DOUBLE_EQ(0.1, resistance);
+    EXPECT_EQ(complex_number(0.1), resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_DOUBLE_EQ(0.5, emf);
+    EXPECT_EQ(0.5, emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
-TEST(ParseTest, NoPunctuationTest) {
+TEST(SkipSyntaxTest, NoPunctuationTest) {
     input_parser parser("1 2 0.1 0.5V");
     parser.make_iteration();
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_DOUBLE_EQ(0.1, resistance);
+    complex_number(0.1);
+    EXPECT_EQ(complex_number(0.1), resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_DOUBLE_EQ(0.5, emf);
+    EXPECT_EQ(0.5, emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
@@ -200,6 +202,202 @@ TEST(ParserThrowsInvalidInputExceptionTest, DashBeforeResistanceInputTest) {
 
 TEST(ParserThrowsInvalidInputExceptionTest, DashEOFTest) {
     input_parser parser("1 -- 2, 4.0; 2.0V;-");
+    parser.make_iteration();
+    EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
+}
+
+TEST(AcInputTest, SingleIterationNoEMFTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2C; 0.3L; 1 -- 3, 0.4R; 0.5C; 0.6L;");
+    parser.make_iteration();
+    auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
+    EXPECT_EQ(1, outcoming_vertex);
+    EXPECT_EQ(2, incoming_vertex);
+    complex_number(0.1, 0.1);
+    EXPECT_EQ(complex_number(0.1, 0.1), resistance);
+    EXPECT_FALSE(parser.is_emf_included());
+    EXPECT_FALSE(parser.is_eof());
+}
+
+TEST(AcInputTest, SingleIterationWithEMFTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2C; 0.3L; 0.5V, 5; 1 -- 3, 0.4R; 0.5C; 0.6L;");
+    parser.make_iteration();
+    auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
+    EXPECT_EQ(1, outcoming_vertex);
+    EXPECT_EQ(2, incoming_vertex);
+    EXPECT_EQ(complex_number(0.1, 0.1), resistance);
+    EXPECT_TRUE(parser.is_emf_included());
+    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_FALSE(parser.is_eof());
+}
+
+TEST(AcInputTest, TwoIterationWithEMFFirstNoEMFSecondTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2C; 0.3L; 0.5V, 5; 1 -- 3, 0.4R; 0.5C; 0.6L;");
+    parser.make_iteration();
+    parser.make_iteration();
+    auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
+    EXPECT_EQ(1, outcoming_vertex);
+    EXPECT_EQ(3, incoming_vertex);
+    EXPECT_EQ(complex_number(0.4, 0.1), resistance);
+    EXPECT_FALSE(parser.is_emf_included());
+    EXPECT_TRUE(parser.is_eof());
+}
+
+TEST(AcInputTest, TwoIterationNoEMFFirstWithEMFSecondTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2C; 0.3L; 1 -- 3, 0.4R; 0.5C; 0.6L; 0.5V, 5;");
+    parser.make_iteration();
+    parser.make_iteration();
+    auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
+    EXPECT_EQ(1, outcoming_vertex);
+    EXPECT_EQ(3, incoming_vertex);
+    EXPECT_EQ(complex_number(0.4, 0.1), resistance);
+    EXPECT_TRUE(parser.is_emf_included());
+    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_TRUE(parser.is_eof());
+}
+
+TEST(AcInputTest, TwoIterationWithEMFTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2C; 0.3L; 0.5V, 5; 1 -- 3, 0.4R; 0.5C; 0.6L; 0.5V, 5;");
+    parser.make_iteration();
+    parser.make_iteration();
+    auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
+    EXPECT_EQ(1, outcoming_vertex);
+    EXPECT_EQ(3, incoming_vertex);
+    EXPECT_EQ(complex_number(0.4, 0.1), resistance);
+    EXPECT_TRUE(parser.is_emf_included());
+    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_TRUE(parser.is_eof());
+}
+
+TEST(SkipSyntaxTest, NoSemicolonAfterAcResistanceTest) {
+    input_parser parser("1 -- 2, 0.1R 0.2C; 0.3L; 0.5V, 5;");
+    parser.make_iteration();
+    auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
+    EXPECT_EQ(1, outcoming_vertex);
+    EXPECT_EQ(2, incoming_vertex);
+    EXPECT_EQ(complex_number(0.1, 0.1), resistance);
+    EXPECT_TRUE(parser.is_emf_included());
+    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_TRUE(parser.is_eof());
+}
+
+TEST(SkipSyntaxTest, NoSemicolonAfterAcCapacityTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2C 0.3L; 0.5V, 5;");
+    parser.make_iteration();
+    auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
+    EXPECT_EQ(1, outcoming_vertex);
+    EXPECT_EQ(2, incoming_vertex);
+    EXPECT_EQ(complex_number(0.1, 0.1), resistance);
+    EXPECT_TRUE(parser.is_emf_included());
+    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_TRUE(parser.is_eof());
+}
+
+TEST(SkipSyntaxTest, NoSemicolonAfterAcInductanceTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2C; 0.3L 0.5V, 5;");
+    parser.make_iteration();
+    auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
+    EXPECT_EQ(1, outcoming_vertex);
+    EXPECT_EQ(2, incoming_vertex);
+    EXPECT_EQ(complex_number(0.1, 0.1), resistance);
+    EXPECT_TRUE(parser.is_emf_included());
+    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_TRUE(parser.is_eof());
+}
+
+TEST(SkipSyntaxTest, NoSemicolonAfterAcEMFTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2C; 0.3L; 0.5V, 5");
+    parser.make_iteration();
+    auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
+    EXPECT_EQ(1, outcoming_vertex);
+    EXPECT_EQ(2, incoming_vertex);
+    EXPECT_EQ(complex_number(0.1, 0.1), resistance);
+    EXPECT_TRUE(parser.is_emf_included());
+    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_TRUE(parser.is_eof());
+}
+
+TEST(SkipSyntaxTest, NoCommaAfterAcEMFAmplitudeTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2C; 0.3L; 0.5V 5;");
+    parser.make_iteration();
+    auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
+    EXPECT_EQ(1, outcoming_vertex);
+    EXPECT_EQ(2, incoming_vertex);
+    EXPECT_EQ(complex_number(0.1, 0.1), resistance);
+    EXPECT_TRUE(parser.is_emf_included());
+    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_TRUE(parser.is_eof());
+}
+
+TEST(SkipSyntaxTest, NoPunctuationAcTest) {
+    input_parser parser("1 2 0.1R 0.2C 0.3L 0.5V 5");
+    parser.make_iteration();
+    auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
+    EXPECT_EQ(1, outcoming_vertex);
+    EXPECT_EQ(2, incoming_vertex);
+    EXPECT_EQ(complex_number(0.1, 0.1), resistance);
+    EXPECT_TRUE(parser.is_emf_included());
+    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_TRUE(parser.is_eof());
+}
+
+TEST(ParserThrowsInvalidInputExceptionTest, UnexpectedCharacterAfterAcResistanceTest) {
+    input_parser parser("1 -- 2, 0.1aR; 0.2C; 0.3L; 0.5V 5;");
+    EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
+}
+
+TEST(ParserThrowsInvalidInputExceptionTest, UnexpectedCharacterAfterAcResistanceDimensionTest) {
+    input_parser parser("1 -- 2, 0.1Rf; 0.2C; 0.3L; 0.5V 5;");
+    EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
+}
+
+TEST(ParserThrowsInvalidInputExceptionTest, UnexpectedCharacterBeforeAcCapacityTest) {
+    input_parser parser("1 -- 2, 0.1R;a 0.2C; 0.3L; 0.5V 5;");
+    EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
+}
+
+TEST(ParserThrowsInvalidInputExceptionTest, UnexpectedCharacterAfterAcCapacityTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2aC; 0.3L; 0.5V 5;");
+    EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
+}
+
+TEST(ParserThrowsInvalidInputExceptionTest, UnexpectedCharacterAfterAcCapacityDimensionTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2Ca; 0.3L; 0.5V 5;");
+    EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
+}
+
+TEST(ParserThrowsInvalidInputExceptionTest, UnexpectedCharacterBeforeAcInductanceTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2C;a 0.3L; 0.5V 5;");
+    EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
+}
+
+TEST(ParserThrowsInvalidInputExceptionTest, UnexpectedCharacterAfterAcInductanceTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2C; 0.3aL; 0.5V 5;");
+    EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
+}
+
+TEST(ParserThrowsInvalidInputExceptionTest, UnexpectedCharacterAfterAcInductanceDimensionTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2C; 0.3La; 0.5V 5;");
+    EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
+}
+
+TEST(ParserThrowsInvalidInputExceptionTest, UnexpectedCharacterBeforeAcEMFTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2C; 0.3L;a 0.5V 5;");
+    EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
+}
+
+TEST(ParserThrowsInvalidInputExceptionTest, UnexpectedCharacterAfterAcEMFAmplitudeTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2C; 0.3L; 0.5aV 5;");
+    parser.make_iteration();
+    EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
+}
+
+TEST(ParserThrowsInvalidInputExceptionTest, UnexpectedCharacterAfterAcEMFAmplitudeDimensionTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2C; 0.3L; 0.5Va 5;");
+    EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
+}
+
+TEST(ParserThrowsInvalidInputExceptionTest, UnexpectedCharacterAfterAcEMFPhaseTest) {
+    input_parser parser("1 -- 2, 0.1R; 0.2C; 0.3L; 0.5V 5a;");
     parser.make_iteration();
     EXPECT_THROW(parser.make_iteration(), input_parser::InvalidInputException);
 }

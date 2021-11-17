@@ -166,7 +166,7 @@ TEST(ArithmeticTest, DivideDoubleThrowsZeroDivisionExceptionTest) {
 
 TEST(AmplitudeTest, AmplitudeTest) {
     complex_number test_number(3, 4);
-    EXPECT_EQ(test_number.get_amplitude(), 25);
+    EXPECT_EQ(test_number.get_amplitude(), 5);
 }
 
 TEST(ConjugaisonTest, ConjugaisonTest) {

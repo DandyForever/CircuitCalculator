@@ -1,3 +1,4 @@
+#include <iostream>
 #include "complex_number.h"
 
 bool is_equal_(double left_number, double right_number) {
@@ -13,8 +14,24 @@ complex_number::complex_number(int real):
         real_(real)
 {}
 
+complex_number::complex_number(double real):
+        real_(real)
+{}
+
 double complex_number::get_amplitude() const {
-    return real_ * real_ + imaginary_ * imaginary_;
+    return sqrt(real_ * real_ + imaginary_ * imaginary_);
+}
+
+double complex_number::get_phase() const {
+    if (is_equal_(imaginary_, 0))
+        return real_ < 0 ? M_PI : 0;
+    if (is_equal_(real_, 0))
+        return imaginary_ < 0 ? 3 * M_PI / 2 : M_PI / 2;
+    if (real_ < 0)
+        return atan(imaginary_ / real_) + M_PI;
+    if (imaginary_ < 0)
+        return atan(imaginary_ / real_) + 2 * M_PI;
+    return atan(imaginary_ / real_);
 }
 
 bool complex_number::is_equal(const complex_number &another_number) const {
@@ -22,7 +39,7 @@ bool complex_number::is_equal(const complex_number &another_number) const {
 }
 
 bool complex_number::is_zero() const {
-    return is_equal({0, 0});
+    return is_equal({0., 0.});
 }
 
 complex_number complex_number::conjugate() const {
@@ -36,7 +53,7 @@ complex_number &complex_number::operator+=(const complex_number &another_number)
 }
 
 complex_number &complex_number::operator+=(double another_number) {
-    return operator+=({another_number, 0});
+    return operator+=({another_number, 0.});
 }
 
 complex_number &complex_number::operator-=(const complex_number &another_number) {
@@ -46,7 +63,7 @@ complex_number &complex_number::operator-=(const complex_number &another_number)
 }
 
 complex_number &complex_number::operator-=(double another_number) {
-    return operator-=({another_number, 0});
+    return operator-=({another_number, 0.});
 }
 
 complex_number &complex_number::operator*=(const complex_number &another_number) {
@@ -57,11 +74,11 @@ complex_number &complex_number::operator*=(const complex_number &another_number)
 }
 
 complex_number &complex_number::operator*=(double another_number) {
-    return operator*=({another_number, 0});
+    return operator*=({another_number, 0.});
 }
 
 complex_number &complex_number::operator/=(double another_number) {
-    if (is_equal_(another_number, 0))
+    if (is_equal_(another_number, 0.))
         throw ZeroDivisionException();
 
     real_ /= another_number;
@@ -74,7 +91,9 @@ complex_number &complex_number::operator/=(const complex_number &another_number)
         throw ZeroDivisionException();
 
     *this *= another_number.conjugate();
-    *this /= another_number.get_amplitude();
+    double amplitude = another_number.get_amplitude();
+    *this /= amplitude;
+    *this /= amplitude;
     return *this;
 }
 

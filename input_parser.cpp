@@ -6,11 +6,22 @@ void input_parser::make_iteration() {
     check_symbol(Vertex_separator);
     check_symbol(Vertex_separator);
     fill_incoming_vertex();
-    check_symbol(Resistance_separator);
+    check_symbol(Input_separator);
     fill_resistance();
+    if (is_ac) {
+        make_ac_iteration();
+    }
     check_symbol(Characteristic_separator);
     fill_emf();
     input >> std::ws;
+}
+
+void input_parser::make_ac_iteration() {
+    check_symbol(Resistance_dimension);
+    check_symbol(Characteristic_separator);
+    fill_capacity();
+    check_symbol(Characteristic_separator);
+    fill_inductance();
 }
 
 bool input_parser::check_symbol(const char separator) {
@@ -40,9 +51,11 @@ void input_parser::check_numeric() {
 void input_parser::fill_emf() {
     input >> std::ws;
     check_numeric();
-    input >> current_edge_info.emf >> std::ws;
+    input >> temporary_emf >> std::ws;
     if (check_symbol(EMF_dimension)) {
         is_previous_has_emf = true;
+        double phase = get_emf_phase();
+        current_edge_info.emf = create_exponential(temporary_emf, phase);
         check_symbol(Characteristic_separator);
         input >> std::ws;
         return;
@@ -52,9 +65,15 @@ void input_parser::fill_emf() {
 }
 
 void input_parser::fill_resistance() {
+    current_edge_info.resistance = {get_impedance()};
+}
+
+double input_parser::get_impedance() {
     input >> std::ws;
     check_numeric();
-    input >> current_edge_info.resistance >> std::ws;
+    double impedance = 0.;
+    input >> impedance >> std::ws;
+    return impedance;
 }
 
 void input_parser::fill_incoming_vertex() {
@@ -65,11 +84,32 @@ void input_parser::fill_incoming_vertex() {
 
 void input_parser::fill_outcoming_vertex() {
     if (!is_previous_has_emf) {
-        current_edge_info.outcoming_vertex = static_cast<size_t>(current_edge_info.emf);
+        current_edge_info.outcoming_vertex = static_cast<size_t>(temporary_emf);
         return;
     }
 
     input >> std::ws;
     check_numeric();
     input >> current_edge_info.outcoming_vertex >> std::ws;
+}
+
+void input_parser::fill_capacity() {
+    current_edge_info.resistance -= {0., get_impedance()};
+    check_symbol(Capacity_dimension);
+}
+
+void input_parser::fill_inductance() {
+    current_edge_info.resistance += {0., get_impedance()};
+    check_symbol(Inductance_dimension);
+}
+
+double input_parser::get_emf_phase() {
+    if (!is_ac)
+        return 0;
+    check_symbol(Input_separator);
+    input >> std::ws;
+    check_numeric();
+    double phase = 0.;
+    input >> phase >> std::ws;
+    return -phase;
 }
