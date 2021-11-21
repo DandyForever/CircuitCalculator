@@ -207,7 +207,7 @@ TEST(OutputTest, PositiveRealPositiveImaginaryTest) {
     complex_number test_number(2, 3);
     std::stringstream output;
     output << test_number;
-    std::string answer("2+i3");
+    std::string answer("(2,3)");
     EXPECT_EQ(output.str(), answer);
 }
 
@@ -215,7 +215,7 @@ TEST(OutputTest, NegativeRealPositiveImaginaryTest) {
     complex_number test_number(-2, 3);
     std::stringstream output;
     output << test_number;
-    std::string answer("-2+i3");
+    std::string answer("(-2,3)");
     EXPECT_EQ(output.str(), answer);
 }
 
@@ -223,7 +223,7 @@ TEST(OutputTest, NegativeRealNegativeImaginaryTest) {
     complex_number test_number(-2, -3);
     std::stringstream output;
     output << test_number;
-    std::string answer("-2-i3");
+    std::string answer("(-2,-3)");
     EXPECT_EQ(output.str(), answer);
 }
 
@@ -231,7 +231,7 @@ TEST(OutputTest, PositiveRealNegativeImaginaryTest) {
     complex_number test_number(2, -3);
     std::stringstream output;
     output << test_number;
-    std::string answer("2-i3");
+    std::string answer("(2,-3)");
     EXPECT_EQ(output.str(), answer);
 }
 

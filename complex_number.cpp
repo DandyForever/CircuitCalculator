@@ -6,36 +6,32 @@ bool is_equal_(double left_number, double right_number) {
 }
 
 complex_number::complex_number(double real, double imaginary):
-    real_(real),
-    imaginary_(imaginary)
+    number(real, imaginary)
 {}
 
 complex_number::complex_number(int real):
-        real_(real)
+    number(real)
 {}
 
 complex_number::complex_number(double real):
-        real_(real)
+    number(real)
+{}
+
+complex_number::complex_number(const std::complex<double>& number_):
+    number(number_)
 {}
 
 double complex_number::get_amplitude() const {
-    return sqrt(real_ * real_ + imaginary_ * imaginary_);
+    return std::abs(number);
 }
 
 double complex_number::get_phase() const {
-    if (is_equal_(imaginary_, 0))
-        return real_ < 0 ? M_PI : 0;
-    if (is_equal_(real_, 0))
-        return imaginary_ < 0 ? 3 * M_PI / 2 : M_PI / 2;
-    if (real_ < 0)
-        return atan(imaginary_ / real_) + M_PI;
-    if (imaginary_ < 0)
-        return atan(imaginary_ / real_) + 2 * M_PI;
-    return atan(imaginary_ / real_);
+    return std::arg(number);
 }
 
 bool complex_number::is_equal(const complex_number &another_number) const {
-    return is_equal_(real_, another_number.real_) && is_equal_(imaginary_, another_number.imaginary_);
+    return is_equal_(number.real(), another_number.number.real()) &&
+            is_equal_(number.imag(), another_number.number.imag());
 }
 
 bool complex_number::is_zero() const {
@@ -43,46 +39,44 @@ bool complex_number::is_zero() const {
 }
 
 complex_number complex_number::conjugate() const {
-    return {real_, -imaginary_};
+    return std::conj(number);
 }
 
 complex_number &complex_number::operator+=(const complex_number &another_number) {
-    real_ += another_number.real_;
-    imaginary_ += another_number.imaginary_;
+    number += another_number.number;
     return *this;
 }
 
 complex_number &complex_number::operator+=(double another_number) {
-    return operator+=({another_number, 0.});
+    number += another_number;
+    return *this;
 }
 
 complex_number &complex_number::operator-=(const complex_number &another_number) {
-    real_ -= another_number.real_;
-    imaginary_ -= another_number.imaginary_;
+    number -= another_number.number;
     return *this;
 }
 
 complex_number &complex_number::operator-=(double another_number) {
-    return operator-=({another_number, 0.});
+    number -= another_number;
+    return *this;
 }
 
 complex_number &complex_number::operator*=(const complex_number &another_number) {
-    complex_number tmp(*this);
-    real_ = tmp.real_ * another_number.real_ - tmp.imaginary_ * another_number.imaginary_;
-    imaginary_ = tmp.real_ * another_number.imaginary_ + tmp.imaginary_ * another_number.real_;
+    number *= another_number.number;
     return *this;
 }
 
 complex_number &complex_number::operator*=(double another_number) {
-    return operator*=({another_number, 0.});
+    number *= another_number;
+    return *this;
 }
 
 complex_number &complex_number::operator/=(double another_number) {
     if (is_equal_(another_number, 0.))
         throw ZeroDivisionException();
 
-    real_ /= another_number;
-    imaginary_ /= another_number;
+    number /= another_number;
     return *this;
 }
 
@@ -90,15 +84,12 @@ complex_number &complex_number::operator/=(const complex_number &another_number)
     if (another_number.is_zero())
         throw ZeroDivisionException();
 
-    *this *= another_number.conjugate();
-    double amplitude = another_number.get_amplitude();
-    *this /= amplitude;
-    *this /= amplitude;
+    number /= another_number.number;
     return *this;
 }
 
 complex_number create_exponential(double amplitude, double phase) {
-    return {amplitude * cos(phase), amplitude * sin(phase)};
+    return std::polar(amplitude, phase);
 }
 
 complex_number operator+(const complex_number& left_number, const complex_number& right_number) {
@@ -158,11 +149,6 @@ bool operator!=(const complex_number& left_number, const complex_number& right_n
 }
 
 std::ostream& operator<<(std::ostream& output, const complex_number& number) {
-    output << number.real_;
-    if (number.imaginary_ < 0)
-        output << '-';
-    else
-        output << "+";
-    output << 'i' << abs(number.imaginary_);
+    output << number.number;
     return output;
 }

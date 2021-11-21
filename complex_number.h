@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include <math.h>
+#include <complex>
 
 
 class complex_number {
@@ -11,10 +12,11 @@ public:
     complex_number(double real, double imaginary);
     complex_number(int real);
     complex_number(double real);
+    complex_number(const std::complex<double>& number_);
 
     double get_amplitude() const;
     double get_phase() const;
-    double get_real() const { return real_; }
+    double get_real() const { return number.real(); }
 
     complex_number conjugate() const;
     complex_number& operator+=(const complex_number& another_number);
@@ -39,8 +41,7 @@ public:
     constexpr static const double DELTA = 1e-10;
 
 private:
-    double real_ = 0;
-    double imaginary_ = 0;
+    std::complex<double> number;
 };
 
 complex_number create_exponential(double amplitude, double phase);

@@ -223,11 +223,11 @@ TEST(CalculationTest, CalculationZeroResistanceDifficultTest) {
                     " 15 -- 20, 0.0; 20 -- 16, 0.0; 120 V");
     circuit test_circuit(inp);
     test_circuit.calculate_edge_current();
-    std::string answer("1 -- 2: 20 A;\n1 -- 6: -20 A;\n2 -- 3: 20 A;\n2 -- 7: -5.83335e-09 A;\n3 -- 4: 20 A;\n"
-                       "3 -- 8: -1.42109e-14 A;\n4 -- 5: 20 A;\n4 -- 9: 5.83335e-09 A;\n5 -- 10: 20 A;\n6 -- 7: 20 A;\n"
-                       "6 -- 11: -40 A;\n7 -- 8: 20 A;\n7 -- 12: -9.16674e-09 A;\n8 -- 9: 20 A;\n"
-                       "8 -- 13: -7.10543e-15 A;\n9 -- 10: 20 A;\n9 -- 14: 9.16665e-09 A;\n10 -- 15: 40 A;"
-                       "\n11 -- 12: 20 A;\n11 -- 16: -60 A;\n12 -- 13: 20 A;\n13 -- 14: 20 A;\n14 -- 15: 20 A;\n"
+    std::string answer("1 -- 2: 20 A;\n1 -- 6: -20 A;\n2 -- 3: 20 A;\n2 -- 7: -5.83329e-09 A;\n3 -- 4: 20 A;\n"
+                       "3 -- 8: -1.06581e-14 A;\n4 -- 5: 20 A;\n4 -- 9: 5.83333e-09 A;\n5 -- 10: 20 A;\n6 -- 7: 20 A;\n"
+                       "6 -- 11: -40.0001 A;\n7 -- 8: 20 A;\n7 -- 12: -9.16673e-09 A;\n8 -- 9: 20 A;\n"
+                       "8 -- 13: -1.06581e-14 A;\n9 -- 10: 20 A;\n9 -- 14: 9.16665e-09 A;\n10 -- 15: 40 A;\n"
+                       "11 -- 12: 20 A;\n11 -- 16: -60 A;\n12 -- 13: 20 A;\n13 -- 14: 20 A;\n14 -- 15: 20 A;\n"
                        "15 -- 20: 60 A;\n20 -- 16: 60 A;");
     EXPECT_EQ(answer, test_circuit.get_edge_current_answer());
 }
@@ -275,7 +275,7 @@ TEST(ACCircuitTest, ConsistentConductanceTest) {
     std::string inp("1 -- 2, 0R; 0C; 1L; 1V, 0; 2 -- 1, 0R; 0C; 1L;");
     circuit test_circuit(inp);
     test_circuit.calculate_edge_current();
-    std::string answer("1 -- 2: 0.5 A, 4.71239;\n2 -- 1: 0.5 A, 4.71239;");
+    std::string answer("1 -- 2: 0.5 A, -1.5708;\n2 -- 1: 0.5 A, -1.5708;");
     EXPECT_EQ(answer, test_circuit.get_edge_current_answer());
 }
 
@@ -283,7 +283,7 @@ TEST(ACCircuitTest, ParallelConductanceTest) {
     std::string inp("1 -- 2, 0R; 0C; 2L; 1 -- 2, 0R; 0C; 2L; 2 -- 1, 0R; 0C; 1L; 2V, 0;");
     circuit test_circuit(inp);
     test_circuit.calculate_edge_current();
-    std::string answer("1 -- 2: 0.5 A, 4.71239;\n1 -- 2: 0.5 A, 4.71239;\n2 -- 1: 1 A, 4.71239;");
+    std::string answer("1 -- 2: 0.5 A, -1.5708;\n1 -- 2: 0.5 A, -1.5708;\n2 -- 1: 1 A, -1.5708;");
     EXPECT_EQ(answer, test_circuit.get_edge_current_answer());
 }
 
@@ -308,7 +308,7 @@ TEST(ACCircuitTest, CalculationTest3) {
     std::string inp("1 -- 2, 50R; 0C; 50L; 100V, 0; 2 -- 1, 100R; 50C; 0L; 2 -- 1, 100R; 0C; 100L;");
     circuit test_circuit(inp);
     test_circuit.calculate_edge_current();
-    std::string answer("1 -- 2: 0.723241 A, 5.86712;\n2 -- 1: 0.496139 A, 0.124355;\n2 -- 1: 0.392232 A, 5.15849;");
+    std::string answer("1 -- 2: 0.723241 A, -0.416065;\n2 -- 1: 0.496139 A, 0.124355;\n2 -- 1: 0.392232 A, -1.12469;");
     EXPECT_EQ(answer, test_circuit.get_edge_current_answer());
 }
 
@@ -316,7 +316,7 @@ TEST(ACCircuitTest, CalculationTest4) {
     std::string inp("1 -- 2, 0R; 0C; 10L; 141V, 0; 2 -- 1, 0R; 10C; 0L; 2 -- 1, 10R; 0C; 0L;");
     circuit test_circuit(inp);
     test_circuit.calculate_edge_current();
-    std::string answer("1 -- 2: 19.9404 A, 5.49779;\n2 -- 1: 14.1 A, 0;\n2 -- 1: 14.1 A, 4.71239;");
+    std::string answer("1 -- 2: 19.9404 A, -0.785398;\n2 -- 1: 14.1 A, 0;\n2 -- 1: 14.1 A, -1.5708;");
     EXPECT_EQ(answer, test_circuit.get_edge_current_answer());
 }
 
@@ -324,7 +324,7 @@ TEST(ACCircuitTest, CalculationTest5) {
     std::string inp("1 -- 1, 12R; 20C; 36L; 100V, 0;");
     circuit test_circuit(inp);
     test_circuit.calculate_edge_current();
-    std::string answer("1 -- 1: 5 A, 5.35589;");
+    std::string answer("1 -- 1: 5 A, -0.927295;");
     EXPECT_EQ(answer, test_circuit.get_edge_current_answer());
 }
 
@@ -332,6 +332,6 @@ TEST(ACCircuitTest, CalculationTest6) {
     std::string inp("1 -- 2, 12R; 0C; 0L; 100V, 0; 2 -- 3, 0R; 20C; 0L; 3 -- 1, 0R; 0C; 36L;");
     circuit test_circuit(inp);
     test_circuit.calculate_edge_current();
-    std::string answer("1 -- 2: 5 A, 5.35589;\n2 -- 3: 5 A, 5.35589;\n3 -- 1: 5 A, 5.35589;");
+    std::string answer("1 -- 2: 5 A, -0.927295;\n2 -- 3: 5 A, -0.927295;\n3 -- 1: 5 A, -0.927295;");
     EXPECT_EQ(answer, test_circuit.get_edge_current_answer());
 }

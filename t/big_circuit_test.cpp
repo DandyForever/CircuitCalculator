@@ -60,7 +60,7 @@ void generate_consistent_circuit_test(size_t vertex_last, CircuitType type) {
             break;
         case CircuitType::AC_INDUCTANCE:
             circuit_ << "0R; 0C; 1L; " << vertex_last << "V, 0; ";
-            answer_ << ", 4.71239";
+            answer_ << ", -1.5708";
             break;
     }
     answer_ << ";\n";
@@ -78,7 +78,7 @@ void generate_consistent_circuit_test(size_t vertex_last, CircuitType type) {
                 break;
             case CircuitType::AC_CAPACITY:
                 circuit_ << "0R; 1C; 0L; ";
-                answer_ << "1 A, 4.71239";
+                answer_ << "1 A, -1.5708";
                 break;
             case CircuitType::AC_INDUCTANCE:
                 circuit_ << "0R; 0C; 1L; ";
