@@ -55,7 +55,7 @@ void input_parser::fill_emf() {
     if (check_symbol(EMF_dimension)) {
         is_previous_has_emf = true;
         double phase = get_emf_phase();
-        current_edge_info.emf = create_exponential(temporary_emf, phase);
+        current_edge_info.emf = std::polar(temporary_emf, phase);
         check_symbol(Characteristic_separator);
         input >> std::ws;
         return;
@@ -65,7 +65,7 @@ void input_parser::fill_emf() {
 }
 
 void input_parser::fill_resistance() {
-    current_edge_info.resistance = {get_impedance()};
+    current_edge_info.resistance = get_impedance();
 }
 
 double input_parser::get_impedance() {
@@ -94,12 +94,12 @@ void input_parser::fill_outcoming_vertex() {
 }
 
 void input_parser::fill_capacity() {
-    current_edge_info.resistance -= {0., get_impedance()};
+    current_edge_info.resistance -= std::complex(0., get_impedance());
     check_symbol(Capacity_dimension);
 }
 
 void input_parser::fill_inductance() {
-    current_edge_info.resistance += {0., get_impedance()};
+    current_edge_info.resistance += std::complex(0., get_impedance());
     check_symbol(Inductance_dimension);
 }
 

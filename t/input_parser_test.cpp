@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "../input_parser.h"
+#include "../complex_number.h"
 
 TEST(DcInputTest, SingleIterationNoEMFTest) {
     input_parser parser("1 -- 2, 0.1; 1 -- 3, 0.2;");
@@ -8,7 +9,7 @@ TEST(DcInputTest, SingleIterationNoEMFTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_EQ(complex_number(0.1), resistance);
+    EXPECT_EQ(std::complex<double>(0.1), resistance);
     EXPECT_FALSE(parser.is_emf_included());
     EXPECT_FALSE(parser.is_eof());
 }
@@ -19,8 +20,8 @@ TEST(DcInputTest, SingleIterationWithEMFTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    complex_number(0.1);
-    EXPECT_EQ(complex_number(0.1), resistance);
+    std::complex<double>(0.1);
+    EXPECT_EQ(std::complex<double>(0.1), resistance);
     EXPECT_TRUE(parser.is_emf_included());
     EXPECT_EQ(0.5, emf);
     EXPECT_FALSE(parser.is_eof());
@@ -33,7 +34,7 @@ TEST(DcInputTest, TwoIterationWithEMFFirstNoEMFSecondTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(3, incoming_vertex);
-    EXPECT_EQ(complex_number(0.2), resistance);
+    EXPECT_EQ(std::complex<double>(0.2), resistance);
     EXPECT_FALSE(parser.is_emf_included());
     EXPECT_TRUE(parser.is_eof());
 }
@@ -45,7 +46,7 @@ TEST(DcInputTest, TwoIterationNoEMFFirstWithEMFSecondTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(3, incoming_vertex);
-    EXPECT_EQ(complex_number(0.2), resistance);
+    EXPECT_EQ(std::complex<double>(0.2), resistance);
     EXPECT_TRUE(parser.is_emf_included());
     EXPECT_EQ(0.6, emf);
     EXPECT_TRUE(parser.is_eof());
@@ -58,7 +59,7 @@ TEST(DcInputTest, TwoIterationWithEMFTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(3, incoming_vertex);
-    EXPECT_EQ(complex_number(0.2), resistance);
+    EXPECT_EQ(std::complex<double>(0.2), resistance);
     EXPECT_TRUE(parser.is_emf_included());
     EXPECT_EQ(0.6, emf);
     EXPECT_TRUE(parser.is_eof());
@@ -70,7 +71,7 @@ TEST(SkipSyntaxTest, SingleDashBetweenVerticesTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_EQ(complex_number(0.1), resistance);
+    EXPECT_EQ(std::complex<double>(0.1), resistance);
     EXPECT_FALSE(parser.is_emf_included());
     EXPECT_TRUE(parser.is_eof());
 }
@@ -81,7 +82,7 @@ TEST(SkipSyntaxTest, NoDashBetweenVerticesTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_EQ(complex_number(0.1), resistance);
+    EXPECT_EQ(std::complex<double>(0.1), resistance);
     EXPECT_FALSE(parser.is_emf_included());
     EXPECT_TRUE(parser.is_eof());
 }
@@ -92,7 +93,7 @@ TEST(SkipSyntaxTest, NoCommaBeforeResistanceTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_EQ(complex_number(0.1), resistance);
+    EXPECT_EQ(std::complex<double>(0.1), resistance);
     EXPECT_FALSE(parser.is_emf_included());
     EXPECT_TRUE(parser.is_eof());
 }
@@ -103,7 +104,7 @@ TEST(SkipSyntaxTest, NoSemicolonAfterResistanceTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_EQ(complex_number(0.1), resistance);
+    EXPECT_EQ(std::complex<double>(0.1), resistance);
     EXPECT_FALSE(parser.is_emf_included());
     EXPECT_TRUE(parser.is_eof());
 }
@@ -114,7 +115,7 @@ TEST(SkipSyntaxTest, NoSemicolonAfterEMFTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_EQ(complex_number(0.1), resistance);
+    EXPECT_EQ(std::complex<double>(0.1), resistance);
     EXPECT_TRUE(parser.is_emf_included());
     EXPECT_EQ(0.5, emf);
     EXPECT_TRUE(parser.is_eof());
@@ -126,8 +127,8 @@ TEST(SkipSyntaxTest, NoPunctuationTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    complex_number(0.1);
-    EXPECT_EQ(complex_number(0.1), resistance);
+    std::complex<double>(0.1);
+    EXPECT_EQ(std::complex<double>(0.1), resistance);
     EXPECT_TRUE(parser.is_emf_included());
     EXPECT_EQ(0.5, emf);
     EXPECT_TRUE(parser.is_eof());
@@ -212,8 +213,8 @@ TEST(AcInputTest, SingleIterationNoEMFTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    complex_number(0.1, 0.1);
-    EXPECT_EQ(complex_number(0.1, 0.1), resistance);
+    std::complex<double>(0.1, 0.1);
+    EXPECT_TRUE(std::complex<double>(0.1, 0.1) == resistance);
     EXPECT_FALSE(parser.is_emf_included());
     EXPECT_FALSE(parser.is_eof());
 }
@@ -224,9 +225,9 @@ TEST(AcInputTest, SingleIterationWithEMFTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_EQ(complex_number(0.1, 0.1), resistance);
+    EXPECT_TRUE(std::complex<double>(0.1, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_EQ(std::polar(0.5, -5.), emf);
     EXPECT_FALSE(parser.is_eof());
 }
 
@@ -237,7 +238,7 @@ TEST(AcInputTest, TwoIterationWithEMFFirstNoEMFSecondTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(3, incoming_vertex);
-    EXPECT_EQ(complex_number(0.4, 0.1), resistance);
+    EXPECT_TRUE(std::complex<double>(0.4, 0.1) == resistance);
     EXPECT_FALSE(parser.is_emf_included());
     EXPECT_TRUE(parser.is_eof());
 }
@@ -249,9 +250,9 @@ TEST(AcInputTest, TwoIterationNoEMFFirstWithEMFSecondTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(3, incoming_vertex);
-    EXPECT_EQ(complex_number(0.4, 0.1), resistance);
+    EXPECT_TRUE(std::complex<double>(0.4, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_EQ(std::polar(0.5, -5.), emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
@@ -262,9 +263,9 @@ TEST(AcInputTest, TwoIterationWithEMFTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(3, incoming_vertex);
-    EXPECT_EQ(complex_number(0.4, 0.1), resistance);
+    EXPECT_TRUE(std::complex<double>(0.4, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_EQ(std::polar(0.5, -5.), emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
@@ -274,9 +275,9 @@ TEST(SkipSyntaxTest, NoSemicolonAfterAcResistanceTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_EQ(complex_number(0.1, 0.1), resistance);
+    EXPECT_TRUE(std::complex<double>(0.1, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_EQ(std::polar(0.5, -5.), emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
@@ -286,9 +287,9 @@ TEST(SkipSyntaxTest, NoSemicolonAfterAcCapacityTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_EQ(complex_number(0.1, 0.1), resistance);
+    EXPECT_TRUE(std::complex<double>(0.1, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_EQ(std::polar(0.5, -5.), emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
@@ -298,9 +299,9 @@ TEST(SkipSyntaxTest, NoSemicolonAfterAcInductanceTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_EQ(complex_number(0.1, 0.1), resistance);
+    EXPECT_TRUE(std::complex<double>(0.1, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_EQ(std::polar(0.5, -5.), emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
@@ -310,9 +311,9 @@ TEST(SkipSyntaxTest, NoSemicolonAfterAcEMFTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_EQ(complex_number(0.1, 0.1), resistance);
+    EXPECT_TRUE(std::complex<double>(0.1, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_EQ(std::polar(0.5, -5.), emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
@@ -322,9 +323,9 @@ TEST(SkipSyntaxTest, NoCommaAfterAcEMFAmplitudeTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_EQ(complex_number(0.1, 0.1), resistance);
+    EXPECT_TRUE(std::complex<double>(0.1, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_EQ(std::polar(0.5, -5.), emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
@@ -334,9 +335,9 @@ TEST(SkipSyntaxTest, NoPunctuationAcTest) {
     auto [incoming_vertex, outcoming_vertex, resistance, emf] = parser.get_current_edge_info();
     EXPECT_EQ(1, outcoming_vertex);
     EXPECT_EQ(2, incoming_vertex);
-    EXPECT_EQ(complex_number(0.1, 0.1), resistance);
+    EXPECT_TRUE(std::complex<double>(0.1, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(create_exponential(0.5, -5), emf);
+    EXPECT_EQ(std::polar(0.5, -5.), emf);
     EXPECT_TRUE(parser.is_eof());
 }
 

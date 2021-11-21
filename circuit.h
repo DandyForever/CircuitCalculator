@@ -5,7 +5,6 @@
 #include "matrix.h"
 #include "graph.h"
 #include "input_parser.h"
-#include "complex_number.h"
 
 class circuit {
 public:
@@ -27,51 +26,51 @@ public:
 
 private:
     bool is_ac = false;
-    std::vector<matrix<complex_number>> conductivity_matrix;
-    std::vector<matrix<complex_number>> emf_matrix;
-    std::vector<matrix<complex_number>> incidence_matrix;
-    std::vector<matrix<complex_number>> edge_current_matrix;
+    std::vector<matrix<std::complex<double>>> conductivity_matrix;
+    std::vector<matrix<std::complex<double>>> emf_matrix;
+    std::vector<matrix<std::complex<double>>> incidence_matrix;
+    std::vector<matrix<std::complex<double>>> edge_current_matrix;
     graph circuit_graph;
     std::vector<graph> circuit_subgraphs;
-    std::vector<complex_number> loop_resistance;
-    std::vector<complex_number> loop_emf;
-    std::vector<complex_number> loop_current;
+    std::vector<std::complex<double>> loop_resistance;
+    std::vector<std::complex<double>> loop_emf;
+    std::vector<std::complex<double>> loop_current;
 
-    void fill_conductivity_matrix(const std::vector<complex_number> &edge_resistance, size_t edge_number,
+    void fill_conductivity_matrix(const std::vector<std::complex<double>> &edge_resistance, size_t edge_number,
                                   size_t subgraph_index);
-    void fill_emf_matrix(const std::vector<complex_number> &edge_voltage, size_t edge_number, size_t subgraph_index);
+    void fill_emf_matrix(const std::vector<std::complex<double>> &edge_voltage, size_t edge_number, size_t subgraph_index);
     void fill_incidence_matrix(size_t vertex_number, size_t edge_number, size_t subgraph_index);
-    void fill_circuit_matrices(const std::vector<complex_number> &edge_resistance,
-                               const std::vector<complex_number> &edge_voltage);
+    void fill_circuit_matrices(const std::vector<std::complex<double>> &edge_resistance,
+                               const std::vector<std::complex<double>> &edge_voltage);
 
-    std::pair<std::vector<complex_number>, std::vector<complex_number>> fill_circuit_graph(input_parser &parser);
+    std::pair<std::vector<std::complex<double>>, std::vector<std::complex<double>>> fill_circuit_graph(input_parser &parser);
 
     void modify_single_edge_current_answer(std::stringstream &answer, graph::edge edge_index, size_t subgraph_index);
-    bool check_resistance(complex_number& resistance) const;
+    bool check_resistance(std::complex<double>& resistance) const;
 
     void calculate_loop_current();
 
     void modify_loops_current_answer(std::stringstream &answer) const;
 
-    void check_empty_input(const std::vector<complex_number> &edge_resistance) const;
+    void check_empty_input(const std::vector<std::complex<double>> &edge_resistance) const;
 
     void check_vertices(graph::vertex incoming, graph::vertex outcoming) const;
 
-    std::pair<std::vector<complex_number>, std::vector<complex_number>>
-    fill_subgraph_edges_parameters(size_t subgraph_index, const std::vector<complex_number> &edge_resistance,
-                                   const std::vector<complex_number> &edge_voltage) const;
+    std::pair<std::vector<std::complex<double>>, std::vector<std::complex<double>>>
+    fill_subgraph_edges_parameters(size_t subgraph_index, const std::vector<std::complex<double>> &edge_resistance,
+                                   const std::vector<std::complex<double>> &edge_voltage) const;
 
     void modify_subgraph_edge_current_answer(std::stringstream &answer, size_t subgraph_index);
 
-    void fill_subgraph_matrices(const std::vector<complex_number> &edge_resistance,
-                                const std::vector<complex_number> &edge_voltage,
+    void fill_subgraph_matrices(const std::vector<std::complex<double>> &edge_resistance,
+                                const std::vector<std::complex<double>> &edge_voltage,
                                 size_t subgraph_index);
 
     void resize_subgraph_number();
 
     const double EPS = 1e-9;
 
-    matrix<complex_number> CalculateFlowMatrix(size_t subgraph_index);
+    matrix<std::complex<double>> CalculateFlowMatrix(size_t subgraph_index);
 };
 
 

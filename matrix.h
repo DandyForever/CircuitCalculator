@@ -6,6 +6,7 @@
 #include <vector>
 #include <numeric>
 #include <tuple>
+#include <complex>
 
 template <typename T>
 class matrix {
@@ -60,6 +61,10 @@ public:
     void print() const;
     bool is_equal(const matrix<T>& another_matrix) const;
     ~matrix();
+
+    class ZeroDivisionException : public std::exception {
+        const char* what () const throw () { return "Trying to divide by zero!"; }
+    };
 
 private:
     row* data;
@@ -261,12 +266,14 @@ matrix<T> matrix<T>::inverse() const {
     if (!is_square())
         throw std::runtime_error("Invert matrix could not be calculated");
 
-    T determinant = get_determinant();
+    const T determinant = get_determinant();
     auto result = matrix<T>(row_number_, col_number_);
     for (size_t row_ = 0; row_ < row_number_; row_++) {
         for (size_t col_ = 0; col_ < col_number_; col_++) {
             auto minor = get_minor(row_, col_);
             T inverse_element = get_inverse_element(row_, col_, minor);
+            if (std::abs(determinant) < 1e-10)
+                throw ZeroDivisionException();
             result[col_][row_] = inverse_element / determinant;
         }
     }
@@ -344,9 +351,12 @@ void matrix<T>::fill_decomposition(matrix<T>& lower, matrix<T>& upper) const {
 
 template<typename T>
 void matrix<T>::fill_lower_iteration(matrix<T> &lower, const matrix<T> &upper, size_t row_, size_t col_) const {
-    lower[row_][col_] = data[row_][col_] / upper[col_][col_];
+    const T divider = upper[col_][col_];
+    if (std::abs(divider) < 1e-10)
+        throw ZeroDivisionException();
+    lower[row_][col_] = data[row_][col_] / divider;
     for (size_t variate_col = 0; variate_col < col_; variate_col++) {
-        lower[row_][col_] -= lower[row_][variate_col] * upper[variate_col][col_] / upper[col_][col_];
+        lower[row_][col_] -= lower[row_][variate_col] * upper[variate_col][col_] / divider;
     }
 }
 
@@ -402,5 +412,8 @@ template <>
 bool matrix<double>::is_equal(double matrix_element, double another_matrix_element) const;
 template <>
 bool matrix<float>::is_equal(float matrix_element, float another_matrix_element) const;
+template <>
+bool matrix<std::complex<double>>::is_equal(std::complex<double> matrix_element,
+                                            std::complex<double> another_matrix_element) const;
 
 #endif //CIRCUITS_MATRIX_H

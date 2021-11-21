@@ -2,18 +2,18 @@
 #define CIRCUITS_INPUT_PARSER_H
 
 
+#include <complex>
 #include <string>
 #include <sstream>
 #include "graph.h"
-#include "complex_number.h"
 
 class input_parser {
 public:
     struct state {
         graph::vertex incoming_vertex;
         graph::vertex outcoming_vertex;
-        complex_number resistance;
-        complex_number emf;
+        std::complex<double> resistance;
+        std::complex<double> emf;
     };
     input_parser(const std::string& input_string): input(input_string) {
         is_ac = input_string.find('C') != std::string::npos;
