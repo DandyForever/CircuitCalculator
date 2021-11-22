@@ -21,7 +21,9 @@ public:
     void make_iteration();
     bool is_eof() { return input.peek() == EOF; }
     bool is_alternating_current() const { return is_ac; }
+
     state get_current_edge_info() const { return current_edge_info; }
+
     bool is_emf_included() const { return is_previous_has_emf; }
 
     class InvalidInputException : std::exception {
