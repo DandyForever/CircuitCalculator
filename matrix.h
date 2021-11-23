@@ -272,8 +272,10 @@ matrix<T> matrix<T>::inverse() const {
         for (size_t col_ = 0; col_ < col_number_; col_++) {
             auto minor = get_minor(row_, col_);
             T inverse_element = get_inverse_element(row_, col_, minor);
-            if (std::abs(determinant) < 1e-10)
+            if (std::abs(determinant) < 1e-18) {
+                std::cout << determinant << std::endl;
                 throw ZeroDivisionException();
+            }
             result[col_][row_] = inverse_element / determinant;
         }
     }
@@ -352,7 +354,7 @@ void matrix<T>::fill_decomposition(matrix<T>& lower, matrix<T>& upper) const {
 template<typename T>
 void matrix<T>::fill_lower_iteration(matrix<T> &lower, const matrix<T> &upper, size_t row_, size_t col_) const {
     const T divider = upper[col_][col_];
-    if (std::abs(divider) < 1e-10)
+    if (std::abs(divider) < 1e-18)
         throw ZeroDivisionException();
     lower[row_][col_] = data[row_][col_] / divider;
     for (size_t variate_col = 0; variate_col < col_; variate_col++) {

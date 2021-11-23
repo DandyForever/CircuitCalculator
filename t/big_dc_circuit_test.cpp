@@ -46,6 +46,11 @@ TEST(FullyConnectedCircuitTest, FullyConnected20Test) { generate_fully_coherent_
 TEST(FullyConnectedCircuitTest, FullyConnected30Test) { generate_fully_coherent_dc_circuit_test(30); }
 TEST(FullyConnectedCircuitTest, FullyConnected40Test) { generate_fully_coherent_dc_circuit_test(40); }
 TEST(FullyConnectedCircuitTest, FullyConnected50Test) { generate_fully_coherent_dc_circuit_test(50); }
+TEST(FullyConnectedCircuitTest, FullyConnected60Test) { generate_fully_coherent_dc_circuit_test(60); }
+TEST(FullyConnectedCircuitTest, FullyConnected70Test) { generate_fully_coherent_dc_circuit_test(70); }
+TEST(FullyConnectedCircuitTest, FullyConnected80Test) { generate_fully_coherent_dc_circuit_test(80); }
+TEST(FullyConnectedCircuitTest, FullyConnected90Test) { generate_fully_coherent_dc_circuit_test(90); }
+TEST(FullyConnectedCircuitTest, FullyConnected100Test) { generate_fully_coherent_dc_circuit_test(100); }
 
 
 TEST(ConsistentCircuitTest, Consistent10Test) { generate_consistent_circuit_test(10); }
@@ -54,6 +59,10 @@ TEST(ConsistentCircuitTest, Consistent30Test) { generate_consistent_circuit_test
 TEST(ConsistentCircuitTest, Consistent40Test) { generate_consistent_circuit_test(40); }
 TEST(ConsistentCircuitTest, Consistent50Test) { generate_consistent_circuit_test(50); }
 TEST(ConsistentCircuitTest, Consistent60Test) { generate_consistent_circuit_test(60); }
+TEST(ConsistentCircuitTest, Consistent70Test) { generate_consistent_circuit_test(70); }
+TEST(ConsistentCircuitTest, Consistent80Test) { generate_consistent_circuit_test(80); }
+TEST(ConsistentCircuitTest, Consistent90Test) { generate_consistent_circuit_test(90); }
+TEST(ConsistentCircuitTest, Consistent100Test) { generate_consistent_circuit_test(100); }
 
 
 TEST(FullyConnectedSubcircuitsTest, FullyConnected10Subcircuit2Test) { generate_fully_coherent_subcircuits_test(10, 2); }
@@ -65,11 +74,15 @@ TEST(FullyConnectedSubcircuitsTest, FullyConnected10Subcircuit5Test) { generate_
 TEST(FullyConnectedSubcircuitsTest, FullyConnected20Subcircuit5Test) { generate_fully_coherent_subcircuits_test(20, 5); }
 TEST(FullyConnectedSubcircuitsTest, FullyConnected30Subcircuit5Test) { generate_fully_coherent_subcircuits_test(30, 5); }
 TEST(FullyConnectedSubcircuitsTest, FullyConnected40Subcircuit5Test) { generate_fully_coherent_subcircuits_test(40, 5); }
+TEST(FullyConnectedSubcircuitsTest, FullyConnected50Subcircuit5Test) { generate_fully_coherent_subcircuits_test(50, 5); }
 TEST(FullyConnectedSubcircuitsTest, FullyConnected10Subcircuit10Test) { generate_fully_coherent_subcircuits_test(10, 10); }
 TEST(FullyConnectedSubcircuitsTest, FullyConnected20Subcircuit10Test) { generate_fully_coherent_subcircuits_test(20, 10); }
 TEST(FullyConnectedSubcircuitsTest, FullyConnected30Subcircuit10Test) { generate_fully_coherent_subcircuits_test(30, 10); }
 TEST(FullyConnectedSubcircuitsTest, FullyConnected40Subcircuit10Test) { generate_fully_coherent_subcircuits_test(40, 10); }
+TEST(FullyConnectedSubcircuitsTest, FullyConnected50Subcircuit10Test) { generate_fully_coherent_subcircuits_test(50, 10); }
 TEST(FullyConnectedSubcircuitsTest, FullyConnected10Subcircuit50Test) { generate_fully_coherent_subcircuits_test(10, 50); }
 TEST(FullyConnectedSubcircuitsTest, FullyConnected20Subcircuit50Test) { generate_fully_coherent_subcircuits_test(20, 50); }
 TEST(FullyConnectedSubcircuitsTest, FullyConnected30Subcircuit50Test) { generate_fully_coherent_subcircuits_test(30, 50); }
+TEST(FullyConnectedSubcircuitsTest, FullyConnected40Subcircuit50Test) { generate_fully_coherent_subcircuits_test(40, 50); }
+TEST(FullyConnectedSubcircuitsTest, FullyConnected50Subcircuit50Test) { generate_fully_coherent_subcircuits_test(50, 50); }
 
