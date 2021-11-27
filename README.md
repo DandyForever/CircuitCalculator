@@ -31,7 +31,7 @@ where
 * *l_i* is inductance in Ohms between *n_out_i* and *n_in_i*, a float
 * *v_i* is voltage in Volts between *n_out_i* and *n_in_i*, a float, not necessary for each
   branch
-* *p_i* is voltage phase in radians between *n_out_i* and *n_in_i*, a float, not necessary
+* *p_i* is voltage phase in degrees between *n_out_i* and *n_in_i*, a float, not necessary
   for each branch, but required if *v_i* is given
 ## Output format
 ### DC circuit
@@ -51,7 +51,7 @@ n_out_2 -- n_in_2: I_2 A, pI_2;
 ```
 where
   * *I_i* is a current in Amperes between *n_out_i* and *n_in_i*
-  * *pI_i* is a current phase in radians between *n_out_i* and *n_in_i*
+  * *pI_i* is a current phase in degrees between *n_out_i* and *n_in_i*
 ## How to build
 Requirements to build and run are CMake version 3.16 and C++ 17
 ### Build and run project
@@ -67,7 +67,8 @@ $ ./ac_circuit
 ```
 ### Build and run End-To-End tests
 #### DC circuit
-*Big DC Circuit test* consists of 3 families of tests on large circuits:
+DC circuit E2E tests consist of 4 families of tests on circuits:
+* *Simple test* consists of 6 tests from internet
 * *Fully coherent circuits* consisting of *n* vertices, where *n* varies
   from 10 to 100 with step 10
 * *Fully coherent subcircuits* are circuits consisting of *m* fully
@@ -76,29 +77,38 @@ $ ./ac_circuit
 * *Consistent circuits* consisting of *n* vertices, where *n* varies from
   10 to 100 with step 10
 
-**Running all tests takes ~15 minutes**
 ```
-$ cmake --build . --target big_dc_circuit_test
+$ cmake --build . --target dc_circuit
+$ ./dc_circuit < t/e2e_dc_test/NAME_test.txt
+```
+
+**Running all tests automatically takes ~15 minutes**
+```
+$ cmake --build . --target big_ac_circuit_test
 $ ./big_dc_circuit_test
 ```
 #### AC circuit
-*Big AC Circuit test* consists of 3 families of tests on large circuits:
+*Big AC Circuit test* consists of 4 families of tests on large circuits:
+* *Simple test* consists of 6 tests from internet
 * *Fully coherent circuits* consisting of *n* vertices, where *n* varies
   from 10 to 100 with step 10
 * *Fully coherent subcircuits* are circuits consisting of *m* fully
   coherent subcircuits with *n* vertices, where *m* is *{2, 5, 10, 50}* and *n*
   varies from 10 to 50 with step 10
-* *Consistent circuits* consisting of *n* vertices, where *n* varies from
-  10 to 100 with step 10. Includes 3 subfamilies, depending on the resistance element
+* *Consistent circuits* consisting of *n* vertices, where *n* varies from 10 to 100
+  with step 10. Includes 5 subfamilies, depending on the resistance elements
   * *Resistant consistent circuits*
   * *Capacitance consistent circuits*
   * *Inductance consistent circuits*
-* *Mixed consistent circuits* consisting of *n* vertices, where *n* varies from
-  10 to 100 with step 10. Includes 2 subfamilies, depending on the impedance elements
   * *Resistance and Capacitance consistent circuits*
   * *Resistance and Inductance consistent circuits*
 
-**Running all tests takes ~1 hour**
+```
+$ cmake --build . --target ac_circuit
+$ ./ac_circuit < t/e2e_dc_test/NAME_test.txt
+```
+
+**Running all tests automatically takes ~1 hour**
 ```
 $ cmake --build . --target big_ac_circuit_test
 $ ./big_ac_circuit_test

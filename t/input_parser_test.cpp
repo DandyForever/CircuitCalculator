@@ -227,7 +227,7 @@ TEST(AcInputTest, SingleIterationWithEMFTest) {
     EXPECT_EQ(2, incoming_vertex);
     EXPECT_TRUE(std::complex<double>(0.1, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(std::polar(0.5, -5.), emf);
+    EXPECT_EQ(std::polar(0.5, -5. / 180 * M_PI), emf);
     EXPECT_FALSE(parser.is_eof());
 }
 
@@ -252,7 +252,7 @@ TEST(AcInputTest, TwoIterationNoEMFFirstWithEMFSecondTest) {
     EXPECT_EQ(3, incoming_vertex);
     EXPECT_TRUE(std::complex<double>(0.4, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(std::polar(0.5, -5.), emf);
+    EXPECT_EQ(std::polar(0.5, -5. / 180 * M_PI), emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
@@ -265,7 +265,7 @@ TEST(AcInputTest, TwoIterationWithEMFTest) {
     EXPECT_EQ(3, incoming_vertex);
     EXPECT_TRUE(std::complex<double>(0.4, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(std::polar(0.5, -5.), emf);
+    EXPECT_EQ(std::polar(0.5, -5. / 180 * M_PI), emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
@@ -277,7 +277,7 @@ TEST(SkipSyntaxTest, NoSemicolonAfterAcResistanceTest) {
     EXPECT_EQ(2, incoming_vertex);
     EXPECT_TRUE(std::complex<double>(0.1, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(std::polar(0.5, -5.), emf);
+    EXPECT_EQ(std::polar(0.5, -5. / 180 * M_PI), emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
@@ -289,7 +289,7 @@ TEST(SkipSyntaxTest, NoSemicolonAfterAcCapacityTest) {
     EXPECT_EQ(2, incoming_vertex);
     EXPECT_TRUE(std::complex<double>(0.1, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(std::polar(0.5, -5.), emf);
+    EXPECT_EQ(std::polar(0.5, -5. / 180 * M_PI), emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
@@ -301,7 +301,7 @@ TEST(SkipSyntaxTest, NoSemicolonAfterAcInductanceTest) {
     EXPECT_EQ(2, incoming_vertex);
     EXPECT_TRUE(std::complex<double>(0.1, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(std::polar(0.5, -5.), emf);
+    EXPECT_EQ(std::polar(0.5, -5. / 180 * M_PI), emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
@@ -313,7 +313,7 @@ TEST(SkipSyntaxTest, NoSemicolonAfterAcEMFTest) {
     EXPECT_EQ(2, incoming_vertex);
     EXPECT_TRUE(std::complex<double>(0.1, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(std::polar(0.5, -5.), emf);
+    EXPECT_EQ(std::polar(0.5, -5. / 180 * M_PI), emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
@@ -325,7 +325,7 @@ TEST(SkipSyntaxTest, NoCommaAfterAcEMFAmplitudeTest) {
     EXPECT_EQ(2, incoming_vertex);
     EXPECT_TRUE(std::complex<double>(0.1, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(std::polar(0.5, -5.), emf);
+    EXPECT_EQ(std::polar(0.5, -5. / 180 * M_PI), emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
@@ -337,7 +337,7 @@ TEST(SkipSyntaxTest, NoPunctuationAcTest) {
     EXPECT_EQ(2, incoming_vertex);
     EXPECT_TRUE(std::complex<double>(0.1, 0.1) == resistance);
     EXPECT_TRUE(parser.is_emf_included());
-    EXPECT_EQ(std::polar(0.5, -5.), emf);
+    EXPECT_EQ(std::polar(0.5, -5. / 180 * M_PI), emf);
     EXPECT_TRUE(parser.is_eof());
 }
 
