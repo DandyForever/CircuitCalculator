@@ -299,7 +299,7 @@ void circuit<T>::modify_loops_current_answer(std::stringstream &answer) const {
 template <typename T>
 void circuit<T>::modify_answer_loop(std::stringstream &answer, size_t vertex_index) const {
     answer << std::abs(loop_current[vertex_index]) << " A, " <<
-           std::arg(loop_current[vertex_index]);
+           std::arg(loop_current[vertex_index]) / M_PI * 180;
 }
 
 template <>
@@ -317,7 +317,7 @@ void circuit<T>::modify_single_edge_current_answer(std::stringstream &answer, gr
 template <typename T>
 void circuit<T>::modify_answer_edge(std::stringstream &answer, graph::edge edge, size_t subgraph_index) {
     answer << std::abs(edge_current_matrix[subgraph_index][edge][0]) << " A, " <<
-           std::arg(edge_current_matrix[subgraph_index][edge][0]);
+           std::arg(edge_current_matrix[subgraph_index][edge][0]) / M_PI * 180;
 }
 
 template <>

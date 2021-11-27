@@ -111,5 +111,5 @@ double input_parser::get_emf_phase() {
     check_numeric();
     double phase = 0.;
     input >> phase >> std::ws;
-    return -phase;
+    return -phase / 180 * M_PI;
 }
