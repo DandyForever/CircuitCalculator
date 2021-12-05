@@ -246,17 +246,20 @@ void input_preworker::check_element_token_line(const std::vector<std::string> &t
 
 void input_preworker::check_include_token_line(const std::vector<std::string> &token_line) const {
     check_tokens_equal(token_line[0], "include");
-    check_second_token_is_name(token_line, 2);
+    if (token_line.size() != 2) {
+        std::cout << "Include line should contain file name" << std::endl;
+        throw UnexpectedTokenException();
+    }
 }
 
 void input_preworker::check_second_token_is_name(const std::vector<std::string> &token_line, size_t line_size) const {
     if (token_line.size() < line_size) {
-        std::cout << "Include line should contain file name" << std::endl;
+        std::cout << "Line should contain variable name" << std::endl;
         throw UnexpectedTokenException();
     }
     check_name(token_line[1]);
     if (token_line.size() > line_size) {
-        std::cout << "Include line should contain only file name" << std::endl;
+        std::cout << "Line should contain only variable name" << std::endl;
         throw UnexpectedTokenException();
     }
 }
