@@ -339,7 +339,7 @@ void calculate_circuit(std::istream& input = std::cin, std::ostream& output = st
 
 template <typename T>
 void calculate_complex_circuit(std::istream& input = std::cin, const std::string& file_name = "input", std::ostream& output = std::cout) {
-    input_preworker preworker(input, file_name);
+    input_preworker preworker(input, file_name, 0);
     preworker.perform_prework();
     circuit<T> cir(preworker.get_output());
     cir.calculate_edge_current();

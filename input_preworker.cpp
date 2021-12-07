@@ -1,6 +1,8 @@
 #include <fstream>
 #include "input_preworker.h"
 
+
+
 std::vector<std::string> input_preworker::tokenize(const std::string& line) {
     std::vector<std::string> tokens_;
     std::stringstream line_(line);
@@ -47,11 +49,51 @@ std::vector<std::string> input_preworker::tokenize(const std::string& line) {
     return tokens_;
 }
 
+input_preworker::input_preworker(std::istream& input, const std::string& file, int max_vertex) {
+    file_name_ = file;
+    vertex_number = max_vertex;
+    if (file_name_ != "input") {
+        auto position = file_name_.find_last_of('/');
+        if (position != std::string::npos) {
+            file_path = file_name_.substr(0, position + 1);
+            std::cout << file_path << " " << file_name_ << std::endl;
+        }
+    }
+    std::string line;
+    while (std::getline(input, line)) {
+        tokens.emplace_back(tokenize(line));
+        check_max_vertex();
+    }
+}
+
+int input_preworker::check_vertex_index(std::string& token) const {
+    for (char c : token) {
+        if (!std::isdigit(c))
+            return 0;
+    }
+    return std::stoi(token);
+}
+
+void input_preworker::check_max_vertex() {
+    if (tokens.back()[0] != "define" && tokens.back()[0] != "include" && std::isalpha(tokens.back()[0][0])) {
+        for (size_t token_index = 2; token_index < tokens.back().size() - 1; token_index += 2)
+            vertex_number = std::max(vertex_number, check_vertex_index(tokens.back()[token_index]));
+    }
+    if (tokens.back().size() > 2 && tokens.back()[1] == "--") {
+        vertex_number = std::max(vertex_number, check_vertex_index(tokens.back()[0]));
+        vertex_number = std::max(vertex_number, check_vertex_index(tokens.back()[2]));
+    }
+    if (tokens.back().size() > 3 && tokens.back()[2] == "--") {
+        vertex_number = std::max(vertex_number, check_vertex_index(tokens.back()[1]));
+        vertex_number = std::max(vertex_number, check_vertex_index(tokens.back()[3]));
+    }
+}
+
 void input_preworker::perform_prework() {
-    for (size_t line_index = 0; line_index < tokens.size(); line_index++) {
+    for (line_index = 0; line_index < tokens.size(); line_index++) {
         auto &token_line = tokens[line_index];
         while (token_line[0] == "define") {
-            create_element(line_index);
+            create_element();
             if (line_index == tokens.size())
                 return;
         }
@@ -85,10 +127,13 @@ void input_preworker::substitute_element(const std::vector<std::string> &token_l
 
 void input_preworker::check_element_existance(const std::string &element_name) const {
     if (!elements.count(element_name)) {
+        print_message_prefix();
         std::cout << "Unknown element " << element_name << std::endl;
         throw UnknownElementException();
     }
 }
+
+void input_preworker::print_message_prefix() const { std::cout << file_name_ << " line " << line_index + 1 << ": "; }
 
 void input_preworker::update_output_with_element_edges(input_preworker::element &element_,
                                                        const std::map<std::string, std::string> &parameter_value_mapping) {
@@ -113,7 +158,9 @@ input_preworker::map_parameters_values(const std::vector<std::string> &token_lin
         parameter_value_mapping[element_.parameters[value_index]] = element_values[value_index];
     }
     for (auto &internal_name: element_.internal_variables) {
-        parameter_value_mapping[internal_name] = std::to_string(++vertex_number); /// TODO message to std::cout
+        parameter_value_mapping[internal_name] = std::to_string(++vertex_number);
+        print_message_prefix();
+        std::cout << "internal " << internal_name << " was enumerate with " << vertex_number << std::endl;
     }
     return parameter_value_mapping;
 }
@@ -121,6 +168,7 @@ input_preworker::map_parameters_values(const std::vector<std::string> &token_lin
 void input_preworker::check_parameters_number(const input_preworker::element &element_,
                                               const std::vector<std::string> &element_values) const {
     if (element_values.size() != element_.parameters.size()) {
+        print_message_prefix();
         std::cout << element_.name << " requires " << element_.parameters.size() << " parameters, but " <<
         element_values.size() << " was given" << std::endl;
         throw InvalidParameterNumberException();
@@ -132,13 +180,19 @@ void input_preworker::manage_include(const std::vector<std::string> &token_line)
     std::string file_name = file_path + token_line[1];
     std::ifstream file_;
     file_.open(file_name);
-    input_preworker file_preworker(file_, file_name);
+    if (!file_.is_open()) {
+        print_message_prefix();
+        std::cout << "File " << token_line[1] << " was not opened" << std::endl;
+        throw FileOpenException();
+    }
+    input_preworker file_preworker(file_, file_name, vertex_number);
     file_.close();
     file_preworker.perform_prework();
     output << file_preworker.get_output();
     auto &file_elements = file_preworker.get_elements();
     for (auto& [name, element] : file_elements) {
         if (elements.count(name)) {
+            print_message_prefix();
             std::cout << "Multiple definition of element " << name << std::endl;
             throw MultipleDefinitionException();
         }
@@ -147,7 +201,7 @@ void input_preworker::manage_include(const std::vector<std::string> &token_line)
     vertex_number = std::max(vertex_number, file_preworker.vertex_number);
 }
 
-void input_preworker::create_element(size_t& line_index) {
+void input_preworker::create_element() {
     auto &token_line = tokens[line_index];
     check_define_token_line(token_line);
     element element_;
@@ -194,10 +248,12 @@ void input_preworker::create_element(size_t& line_index) {
 void input_preworker::check_parameter_defined(const std::vector<std::string> &token_line,
                                               const input_preworker::element &element_) const {
     if (!element_.variables.count(token_line[1])) {
+        print_message_prefix();
         std::cout << "Parameter " << token_line[1] << " in element " << element_.name << "is undefined" << std::endl;
         throw UndefinedVariableException();
     }
     if (!element_.variables.count(token_line[3])) {
+        print_message_prefix();
         std::cout << "Parameter " << token_line[3] << " in element " << element_.name << "is undefined" << std::endl;
         throw UndefinedVariableException();
     }
@@ -206,11 +262,13 @@ void input_preworker::check_parameter_defined(const std::vector<std::string> &to
 void input_preworker::check_define_token_line(const std::vector<std::string> &token_line) const {
     check_tokens_equal(token_line[0], "define");
     if (token_line.size() < 4) {
+        print_message_prefix();
         std::cout << "Incomplete define line" << std::endl;
         throw UnexpectedTokenException();
     }
     check_name(token_line[1]);
     if (elements.count(token_line[1])) {
+        print_message_prefix();
         std::cout << "Multiple definition of element " << token_line[1] << std::endl;
         throw MultipleDefinitionException();
     }
@@ -220,6 +278,7 @@ void input_preworker::check_define_token_line(const std::vector<std::string> &to
     for (size_t token_index = 4; token_index < token_line.size() - 1; token_index += 2)
         check_tokens_equal(token_line[token_index], ",");
     if (token_line[token_line.size() - 2] == ",") {
+        print_message_prefix();
         std::cout << "Unexpected token \',\' in element " << token_line[1] << " definition" << std::endl;
         throw UnexpectedTokenException();
     }
@@ -228,6 +287,7 @@ void input_preworker::check_define_token_line(const std::vector<std::string> &to
 
 void input_preworker::check_element_token_line(const std::vector<std::string> &token_line) const {
     if (token_line.size() < 3) {
+        print_message_prefix();
         std::cout << "Incomplete define line" << std::endl;
         throw UnexpectedTokenException();
     }
@@ -238,6 +298,7 @@ void input_preworker::check_element_token_line(const std::vector<std::string> &t
     for (size_t token_index = 3; token_index < token_line.size() - 1; token_index += 2)
         check_tokens_equal(token_line[token_index], ",");
     if (token_line[token_line.size() - 2] == ",") {
+        print_message_prefix();
         std::cout << "Unexpected token \',\' in element " << token_line[0] << " substitution" << std::endl;
         throw UnexpectedTokenException();
     }
@@ -247,18 +308,21 @@ void input_preworker::check_element_token_line(const std::vector<std::string> &t
 void input_preworker::check_include_token_line(const std::vector<std::string> &token_line) const {
     check_tokens_equal(token_line[0], "include");
     if (token_line.size() != 2) {
-        std::cout << "Include line should contain file name" << std::endl;
+        print_message_prefix();
+        std::cout << "Include line should contain file name only" << std::endl;
         throw UnexpectedTokenException();
     }
 }
 
 void input_preworker::check_second_token_is_name(const std::vector<std::string> &token_line, size_t line_size) const {
     if (token_line.size() < line_size) {
+        print_message_prefix();
         std::cout << "Line should contain variable name" << std::endl;
         throw UnexpectedTokenException();
     }
     check_name(token_line[1]);
     if (token_line.size() > line_size) {
+        print_message_prefix();
         std::cout << "Line should contain only variable name" << std::endl;
         throw UnexpectedTokenException();
     }
@@ -272,6 +336,7 @@ void input_preworker::check_internal_token_line(const std::vector<std::string> &
 
 void input_preworker::check_edge_token_line(const std::vector<std::string> &token_line) const {
     if (token_line.size() < 12) {
+        print_message_prefix();
         std::cout << "Incomplete edge token line" << std::endl;
         throw UnexpectedTokenException();
     }
@@ -283,6 +348,7 @@ void input_preworker::check_edge_token_line(const std::vector<std::string> &toke
 
 void input_preworker::check_define_edge_token_line(const std::vector<std::string> &token_line) const {
     if (token_line.size() < 13) {
+        print_message_prefix();
         std::cout << "Incomplete edge token line" << std::endl;
         throw UnexpectedTokenException();
     }
@@ -307,6 +373,7 @@ void input_preworker::check_edge_attributes(const std::vector<std::string> &toke
         check_tokens_equal(token_line[max_tokens - 6], ";");
         if (token_line.size() > max_tokens - 5) {
             if (token_line.size() < max_tokens - 1) {
+                print_message_prefix();
                 std::cout << "Incomplete edge token line" << std::endl;
                 throw UnexpectedTokenException();
             }
@@ -317,6 +384,7 @@ void input_preworker::check_edge_attributes(const std::vector<std::string> &toke
             if (token_line.size() > max_tokens - 1) {
                 check_tokens_equal(token_line[max_tokens - 1], ";");
                 if (token_line.size() > max_tokens) {
+                    print_message_prefix();
                     std::cout << "Edge token line include unexpected tokens" << std::endl;
                     throw UnexpectedTokenException();
                 }
@@ -327,11 +395,13 @@ void input_preworker::check_edge_attributes(const std::vector<std::string> &toke
 
 void input_preworker::check_name(const std::string& token) const {
     if (!std::isalpha(token[0])) {
+        print_message_prefix();
         std::cout << "Invalid name " << token << ": should start with a letter" << std::endl;
         throw UnexpectedTokenException();
     }
     for (char symbol : token) {
         if (!std::isalpha(symbol) && !std::isdigit(symbol) && symbol != '.') {
+            print_message_prefix();
             std::cout << "Invalid name " << token << ": unacceptable character " << symbol << std::endl;
             throw UnexpectedTokenException();
         }
@@ -341,6 +411,7 @@ void input_preworker::check_name(const std::string& token) const {
 void input_preworker::check_integer(const std::string& token) const {
     for (char symbol : token) {
         if (!std::isdigit(symbol)) {
+            print_message_prefix();
             std::cout << "Invalid integer " << token << ": unacceptable character " << symbol << std::endl;
             throw UnexpectedTokenException();
         }
@@ -351,6 +422,7 @@ void input_preworker::check_double(const std::string& token) const {
     size_t dot_count = 0;
     for (char symbol : token) {
         if (!std::isdigit(symbol) && symbol != '.' && symbol != '-') {
+            print_message_prefix();
             std::cout << "Invalid double " << token << ": unacceptable character " << symbol << std::endl;
             throw UnexpectedTokenException();
         }
@@ -358,6 +430,7 @@ void input_preworker::check_double(const std::string& token) const {
             dot_count++;
     }
     if (dot_count > 1) {
+        print_message_prefix();
         std::cout << "Invalid double " << token << ": more than one dot found" << std::endl;
         throw UnexpectedTokenException();
     }
@@ -365,6 +438,7 @@ void input_preworker::check_double(const std::string& token) const {
 
 void input_preworker::check_tokens_equal(const std::string &token, const std::string &expected_token) const {
     if (token != expected_token) {
+        print_message_prefix();
         std::cout << "Unexpected token " << token << ": " << expected_token << " was expected" << std::endl;
         throw UnexpectedTokenException();
     }

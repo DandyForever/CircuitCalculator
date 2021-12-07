@@ -27,7 +27,7 @@ void generate_fully_coherent_subcircuits_test(size_t subcircuit_vertices, size_t
 //    answer_file << answer_.str();
 }
 
-void generate_fully_coherent_ac_circuit_test(size_t vertex_number/*, const std::string& test_file_name*/) {
+void generate_fully_coherent_circuit_test(size_t vertex_number/*, const std::string& test_file_name*/) {
     generate_fully_coherent_subcircuits_test(vertex_number, 1/*, test_file_name*/);
 }
 
@@ -106,16 +106,17 @@ void generate_consistent_circuit_test(size_t vertex_last, CircuitType type/*, co
 //    answer_file << answer_.str();
 }
 
-TEST(FullyConnectedCircuitTest, FullyConnected10Test) { generate_fully_coherent_ac_circuit_test(10/*, "FullyConnected10"*/); }
-TEST(FullyConnectedCircuitTest, FullyConnected20Test) { generate_fully_coherent_ac_circuit_test(20/*, "FullyConnected20"*/); }
-TEST(FullyConnectedCircuitTest, FullyConnected30Test) { generate_fully_coherent_ac_circuit_test(30/*, "FullyConnected30"*/); }
-TEST(FullyConnectedCircuitTest, FullyConnected40Test) { generate_fully_coherent_ac_circuit_test(40/*, "FullyConnected40"*/); }
-TEST(FullyConnectedCircuitTest, FullyConnected50Test) { generate_fully_coherent_ac_circuit_test(50/*, "FullyConnected50"*/); }
-TEST(FullyConnectedCircuitTest, FullyConnected60Test) { generate_fully_coherent_ac_circuit_test(60/*, "FullyConnected60"*/); }
-TEST(FullyConnectedCircuitTest, FullyConnected70Test) { generate_fully_coherent_ac_circuit_test(70/*, "FullyConnected70"*/); }
-TEST(FullyConnectedCircuitTest, FullyConnected80Test) { generate_fully_coherent_ac_circuit_test(80/*, "FullyConnected80"*/); }
-TEST(FullyConnectedCircuitTest, FullyConnected90Test) { generate_fully_coherent_ac_circuit_test(90/*, "FullyConnected90"*/); }
-TEST(FullyConnectedCircuitTest, FullyConnected100Test) { generate_fully_coherent_ac_circuit_test(100/*, "FullyConnected100"*/); }
+TEST(FullyConnectedCircuitTest, FullyConnected10Test) { generate_fully_coherent_circuit_test(10/*, "FullyConnected10"*/); }
+TEST(FullyConnectedCircuitTest, FullyConnected20Test) { generate_fully_coherent_circuit_test(20/*, "FullyConnected20"*/); }
+TEST(FullyConnectedCircuitTest, FullyConnected30Test) { generate_fully_coherent_circuit_test(30/*, "FullyConnected30"*/); }
+TEST(FullyConnectedCircuitTest, FullyConnected40Test) { generate_fully_coherent_circuit_test(40/*, "FullyConnected40"*/); }
+TEST(FullyConnectedCircuitTest, FullyConnected50Test) { generate_fully_coherent_circuit_test(50/*, "FullyConnected50"*/); }
+TEST(FullyConnectedCircuitTest, FullyConnected60Test) { generate_fully_coherent_circuit_test(60/*, "FullyConnected60"*/); }
+TEST(FullyConnectedCircuitTest, FullyConnected70Test) { generate_fully_coherent_circuit_test(70/*, "FullyConnected70"*/); }
+TEST(FullyConnectedCircuitTest, FullyConnected80Test) { generate_fully_coherent_circuit_test(80/*, "FullyConnected80"*/); }
+TEST(FullyConnectedCircuitTest, FullyConnected90Test) { generate_fully_coherent_circuit_test(90/*, "FullyConnected90"*/); }
+TEST(FullyConnectedCircuitTest, FullyConnected100Test) {
+    generate_fully_coherent_circuit_test(100/*, "FullyConnected100"*/); }
 
 TEST(FullyConnectedSubcircuitsTest, FullyConnected10Subcircuit2Test) { generate_fully_coherent_subcircuits_test(10, 2/*, "FullyConnected10Subcircuit2"*/); }
 TEST(FullyConnectedSubcircuitsTest, FullyConnected20Subcircuit2Test) { generate_fully_coherent_subcircuits_test(20, 2/*, "FullyConnected20Subcircuit2"*/); }
