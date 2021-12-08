@@ -1,0 +1,4 @@
+include elements/simple4-1.txt
+include elements/simple4-2.txt
+DCCircuit(1, 2)
+DCCircuit1(1, 2, 3, 4)

@@ -1,0 +1,12 @@
+define Resistance0(A, B)
+ A -- B, 0R;0C;0L;
+
+
+
+
+
+
+define Resistance1(A, B)
+ A -- B, 1R;0C;0L;
+define Resistance2(A, B)
+ A -- B, 2R;0C;0L;

@@ -1,0 +1,7 @@
+include elements/simple12.txt
+ThreePhase(1,2,3,4)
+define Other(A,B,C,D)
+ A -- D, 50R;0C;35L;
+ B -- D, 50R;0C;0L;
+ C -- D, 0R;0C;35L;
+Other(1, 2, 3, 4)

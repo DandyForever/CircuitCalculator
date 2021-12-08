@@ -1,0 +1,8 @@
+define DCCircuit(A, B)
+ A -- B, 3R;0C;0L; 15V, 0;
+define DCCircuit1(A, B, C, D)
+ B -- C, 1R;0C;0L;
+ B -- D, 10R;0C;0L;
+ C -- D, 5R;0C;0L;
+ C -- D, 10R;0C;0L;
+ D -- A, 2R;0C;0L;

@@ -1,0 +1,2 @@
+define DCCircuit(A, B)
+ A -- B, 50R;0C;0L; 75V, 180;

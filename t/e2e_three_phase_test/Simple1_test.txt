@@ -1,0 +1,2 @@
+include elemets/simple1.txt
+DCCircuit(1, 2, 3, 4)

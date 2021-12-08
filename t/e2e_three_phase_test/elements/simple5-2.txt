@@ -1,0 +1,4 @@
+include simple5-1.txt
+
+define Voltage(A, B)
+ A -- B, 0R;0C;0L; 120V, 0

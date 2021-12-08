@@ -1,0 +1,4 @@
+define Loop()
+ internal x
+ x -- x, 1R;0C;0L; 1V, 0
+Loop()
