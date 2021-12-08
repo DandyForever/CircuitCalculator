@@ -56,7 +56,6 @@ input_preworker::input_preworker(std::istream& input, const std::string& file, i
         auto position = file_name_.find_last_of('/');
         if (position != std::string::npos) {
             file_path = file_name_.substr(0, position + 1);
-            std::cout << file_path << " " << file_name_ << std::endl;
         }
     }
     std::string line;
