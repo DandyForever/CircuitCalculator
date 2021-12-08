@@ -33,6 +33,39 @@ where
   branch
 * *p_i* is voltage phase in degrees between *n_out_i* and *n_in_i*, a float, not necessary
   for each branch, but required if *v_i* is given
+### Three Phase circuit
+It is possible to define custom electrical elements. For example, Resistance 50 Ohms
+could be defined as follows:
+```
+define R50(A, B)
+  A -- B, 50R; 0C; 0L;
+```
+After custom element defined you could use it:
+```
+R50(1, 2)
+```
+That example means that between vertices 1 and 2 there is an element R50 defined
+above.
+
+Also, it is possible to use internal variables inside your custom elements. For
+example, in such way three phase circuit could be conveniently defined:
+```
+define ThreePhase(A, B, C, N)
+  internal Z
+  Z -- A, 0R; 0C; 0L; 220V, 0
+  Z -- B, 0R; 0C; 0L; 220V, 120
+  Z -- C, 0R; 0C; 0L; 220V, -120
+  Z -- N, 0R; 0C; 0L;
+```
+
+If your elements defined in several files, you could include them. For example, if
+element ThreePhase above defined in file three_phase.txt, you could include and use
+it as follows:
+```
+include three_phase.txt
+ThreePhase(1, 2, 3, 4)
+...
+```
 ## Output format
 ### DC circuit
 Branch currents display in the following format:
@@ -52,6 +85,8 @@ n_out_2 -- n_in_2: I_2 A, pI_2;
 where
   * *I_i* is a current in Amperes between *n_out_i* and *n_in_i*
   * *pI_i* is a current phase in degrees between *n_out_i* and *n_in_i*
+### Three Phase circuit
+Branch currents display in the same way as for *AC circuit* 
 ## How to build
 Requirements to build and run are CMake version 3.16 and C++ 17
 ### Build and run project
@@ -64,6 +99,11 @@ $ ./dc_circuit
 ```
 $ cmake --build . --target ac_circuit
 $ ./ac_circuit
+```
+#### Three Phase circuit
+```
+$ cmake --build . --target three_phase_circuit
+$ ./three_phase_circuit INPUT_FILE
 ```
 ### Build and run End-To-End tests
 #### DC circuit
@@ -113,6 +153,20 @@ $ ./ac_circuit < t/e2e_dc_test/NAME_test.txt
 $ cmake --build . --target big_ac_circuit_test
 $ ./big_ac_circuit_test
 ```
+#### Three Phase circuit
+*Big Three Phase Circuit test* consist of the same tests as *AC Circuit test*.
+The only difference between them is the input format: for all edges of three
+phase circuits custom elements are defined.
+```
+$ cmake --build . --target three_phase_circuit
+$ ./three_phase_circuit t/e2e_three_phase_test/NAME_test.txt
+```
+
+**Running all tests automatically takes ~1 hour**
+```
+$ cmake --build . --target big_three_phase_circuit_test
+$ ./big_three_phase_circuit_test
+```
 ### Build and run Unit tests
 #### Matrix tests
 ```
@@ -123,6 +177,11 @@ $ ./matrix_test
 ```
 $ cmake --build . --target graph_test
 $ ./graph_test
+```
+#### Input Preworker tests
+```
+$ cmake --build . --input_preworker_test
+$ ./input_preworker_test
 ```
 #### Input Parser tests
 ```
@@ -138,4 +197,9 @@ $ ./dc_circuit_test
 ```
 $ cmake --build . --target ac_circuit_test
 $ ./ac_circuit_test
+```
+#### Three Phase Circuit tests
+```
+$ cmake --build . --target three_phase_circuit_test
+$ ./three_phase_circuit_test
 ```

@@ -34,7 +34,7 @@ TEST(CalculationTest, DCCircuit3Test) {
     generate_test_file("dc_test.txt",
                        "define DCCircuit(A, B)\n A -- B, 50R;0C;0L; 75V, 180;\n\ndefine DCCircuit1(A, B, C, D)\n B -- C, 50R;0C;0L;\n A -- C, 150R;0C;0L;\n A -- D, 100R;0C;0L; 100V, 180\n D -- C, 50R;0C;0L;");
     generate_calculation_test("include dc_test.txt\nDCCircuit(1, 2)\nDCCircuit1(1, 2, 3, 4)",
-                              "1 -- 2: 0.142857 A, -180;\n1 -- 3: 0.404762 A, 7.01648e-15;\n1 -- 4: 0.261905 A, -180;\n2 -- 3: 0.142857 A, -180;\n4 -- 3: 0.261905 A, -180;");
+                              "1 -- 2: 0.142857 A, -180;\n1 -- 3: 0.404762 A, 7.01671e-15;\n1 -- 4: 0.261905 A, -180;\n2 -- 3: 0.142857 A, -180;\n4 -- 3: 0.261905 A, -180;");
 }
 
 TEST(CalculationTest, DCCircuit4Test) {
@@ -43,7 +43,7 @@ TEST(CalculationTest, DCCircuit4Test) {
     generate_test_file("dc_test2.txt",
                        "define DCCircuit1(A, B, C, D)\n B -- C, 50R;0C;0L;\n A -- C, 150R;0C;0L;\n A -- D, 100R;0C;0L; 100V, 0\n D -- C, 50R;0C;0L;");
     generate_calculation_test("include dc_test1.txt\ninclude dc_test2.txt\nDCCircuit(1, 2)\nDCCircuit1(1, 2, 3, 4)",
-                              "1 -- 2: 0.714286 A, -180;\n1 -- 3: 0.0238095 A, 6.31483e-14;\n1 -- 4: 0.690476 A, 2.17753e-15;\n2 -- 3: 0.714286 A, -180;\n4 -- 3: 0.690476 A, 2.17753e-15;");
+                              "1 -- 2: 0.714286 A, -180;\n1 -- 3: 0.0238095 A, 6.31504e-14;\n1 -- 4: 0.690476 A, 2.1776e-15;\n2 -- 3: 0.714286 A, -180;\n4 -- 3: 0.690476 A, 2.1776e-15;");
 }
 
 TEST(CalculationTest, DCCircuit5Test) {
