@@ -5,6 +5,7 @@
 #include "matrix.h"
 #include "graph.h"
 #include "input_parser.h"
+#include "input_preworker.h"
 
 template <typename T>
 class circuit {
@@ -71,7 +72,7 @@ private:
 
     void resize_subgraph_number();
 
-    const double EPS = 1e-9;
+    const double EPS = 1e-9;//-9
 
     matrix<T> CalculateFlowMatrix(size_t subgraph_index);
 
@@ -332,6 +333,15 @@ void calculate_circuit(std::istream& input = std::cin, std::ostream& output = st
         input_string.insert(input_string.length(), inp);
     }
     circuit<T> cir(input_string);
+    cir.calculate_edge_current();
+    output << cir.get_edge_current_answer();
+}
+
+template <typename T>
+void calculate_complex_circuit(std::istream& input = std::cin, const std::string& file_name = "input", std::ostream& output = std::cout) {
+    input_preworker preworker(input, file_name, 0);
+    preworker.perform_prework();
+    circuit<T> cir(preworker.get_output());
     cir.calculate_edge_current();
     output << cir.get_edge_current_answer();
 }

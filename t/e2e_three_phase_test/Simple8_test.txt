@@ -1,0 +1,8 @@
+define R10C10(A,B)
+ A -- B, 0R;10C;0L;
+ A -- B, 10R;0C;0L;
+
+include elements/simple8.txt
+
+L10V141(1, 2)
+R10C10(2,1)

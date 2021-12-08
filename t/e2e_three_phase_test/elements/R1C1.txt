@@ -1,0 +1,2 @@
+define R1C1(A,B)
+ A -- B, 1R;1C;0L;

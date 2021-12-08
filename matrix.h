@@ -316,14 +316,18 @@ T matrix<T>::get_determinant() const {
     if (row_number_ != col_number_)
         throw std::runtime_error("Cannot calculate matrix determinant");
 
-    auto [lower, upper] = get_decomposition();
-    T lower_determinant = static_cast<T>(1);
-    T upper_determinant = static_cast<T>(1);
-    for (size_t row_ = 0; row_ < row_number_; row_++) {
-        lower_determinant *= lower[row_][row_];
-        upper_determinant *= upper[row_][row_];
+    try {
+        auto[lower, upper] = get_decomposition();
+        T lower_determinant = static_cast<T>(1);
+        T upper_determinant = static_cast<T>(1);
+        for (size_t row_ = 0; row_ < row_number_; row_++) {
+            lower_determinant *= lower[row_][row_];
+            upper_determinant *= upper[row_][row_];
+        }
+        return lower_determinant * upper_determinant;
+    } catch(...) {
+        return 0;
     }
-    return lower_determinant * upper_determinant;
 }
 
 template <typename T>
@@ -354,8 +358,9 @@ void matrix<T>::fill_decomposition(matrix<T>& lower, matrix<T>& upper) const {
 template<typename T>
 void matrix<T>::fill_lower_iteration(matrix<T> &lower, const matrix<T> &upper, size_t row_, size_t col_) const {
     const T divider = upper[col_][col_];
-    if (std::abs(divider) < 1e-18)
+    if (std::abs(divider) < 1e-18) {
         throw ZeroDivisionException();
+    }
     lower[row_][col_] = data[row_][col_] / divider;
     for (size_t variate_col = 0; variate_col < col_; variate_col++) {
         lower[row_][col_] -= lower[row_][variate_col] * upper[variate_col][col_] / divider;

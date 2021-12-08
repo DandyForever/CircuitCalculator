@@ -1,0 +1,6 @@
+define ThreePhase(A,B,C,N)
+ internal Z
+    Z -- A, 0R; 0C; 0L; 220V, 0
+    Z -- B, 0R; 0C; 0L; 220V, 120
+    Z -- C, 0R; 0C; 0L; 220V, -120
+    Z -- N, 0R; 0C; 0L;

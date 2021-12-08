@@ -1,0 +1,6 @@
+define R100C50L100(A,B)
+ A -- B, 100R;50C;0L;
+ A -- B, 100R;0C;100L;
+include elements/simple7.txt
+R50L50V100(1, 2)
+R100C50L100(2, 1)

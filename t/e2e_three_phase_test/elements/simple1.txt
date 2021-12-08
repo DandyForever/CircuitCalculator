@@ -1,0 +1,7 @@
+define DCCircuit(A, B, C, D)
+ A -- B, 4.0R;0C;0L;
+ A -- C, 10.0R;0C;0L;
+ A -- D, 2.0R;0C;0L; -12.0V, 0;
+ B -- C, 60.0R;0C;0L;
+ B -- D, 22.0R;0C;0L;
+ C -- D, 5.0R;0C;0L;

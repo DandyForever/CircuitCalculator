@@ -1,0 +1,2 @@
+define C1(A,B)
+ A -- B, 0R;1C;0L;
