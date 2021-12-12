@@ -12,16 +12,16 @@ ws  [ \t]+
 ws_opt [ \t]*
 alpha [A-Za-z]
 dig   [0-9]
-bad [^\n"?:;*<>| ,()]
+bad [^\n"?:;*<>| \t,()]
 include_line include{ws}(({bad}*\/)|({bad}+{bad}*)){ws_opt}\n?
 name {alpha}({alpha}|{dig})*
 integer [-+]?{dig}+
 num1 [-+]?{dig}+\.?([eE][-+]?{dig}+)?
 num2 [-+]?{dig}*\.{dig}+([eE][-+]?{dig}+)?
 number {num1}|{num2}
-define_line (define{ws}{name}{ws_opt}\()({ws_opt}|{name}{ws_opt}(\,{ws_opt}{name}{ws_opt})*)(\){ws_opt}\n)
+define_line (define{ws}{name}{ws_opt}\()({ws_opt}|{name}{ws_opt}(\,{ws_opt}{name}{ws_opt})*)(\){ws_opt}\n?)
 internal_line {ws}internal{ws}{name}{ws_opt}\n?
-edge_attributes \,{ws_opt}{number}R{ws_opt};{ws_opt}{number}C{ws_opt};{ws_opt}{number}L{ws_opt};?{ws_opt}({number}V{ws_opt},{ws_opt}{number};?)?{ws_opt}\n?
+edge_attributes \,{ws_opt}{number}R{ws_opt};{ws_opt}{number}C{ws_opt};{ws_opt}{number}L{ws_opt};?{ws_opt}(;{ws_opt}{number}V{ws_opt},{ws_opt}{number};?)?{ws_opt}\n?
 element_edge_line {ws}{name}{ws_opt}--{ws_opt}{name}{ws_opt}{edge_attributes}
 edge_line {integer}{ws_opt}--{ws_opt}{integer}{ws_opt}{edge_attributes}
 call_line ({name}{ws_opt}\()({ws_opt}|{integer}{ws_opt}(\,{ws_opt}{integer}{ws_opt})*)(\){ws_opt}\n?)

@@ -95,6 +95,8 @@ private:
     std::stringstream simplify_edge_line(const Scanner &scanner) const;
 
     void tokenize_edge_attributes(std::stringstream &edge_line_, std::vector<std::string> &edge_tokens, int shift);
+
+    void check_element_redefinition(std::string name);
 };
 
 

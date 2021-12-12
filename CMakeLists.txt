@@ -27,7 +27,7 @@ set(SOURCE circuit.cpp input_preworker.cpp scan.cpp input_parser.cpp graph.cpp m
 add_executable(matrix_test t/matrix_test.cpp matrix.cpp)
 add_executable(graph_test t/graph_test.cpp graph.cpp)
 add_executable(input_parser_test t/input_parser_test.cpp input_parser.cpp)
-add_executable(input_preworker_test t/input_preworker_test.cpp input_preworker.cpp)
+add_executable(input_preworker_test t/input_preworker_test.cpp input_preworker.cpp scan.cpp)
 add_executable(dc_circuit_test t/dc_circuit_test.cpp ${SOURCE})
 add_executable(ac_circuit_test t/ac_circuit_test.cpp ${SOURCE})
 add_executable(three_phase_circuit_test t/three_phase_circuit_test.cpp ${SOURCE})
