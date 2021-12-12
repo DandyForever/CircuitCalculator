@@ -88,7 +88,7 @@ where
 ### Three Phase circuit
 Branch currents display in the same way as for *AC circuit* 
 ## How to build
-Requirements to build and run are CMake version 3.16 and C++ 17
+Requirements to build and run are Flex, CMake version 3.16 and C++ 17
 ### Build and run project
 #### DC circuit
 ```

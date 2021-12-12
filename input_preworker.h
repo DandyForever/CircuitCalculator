@@ -7,6 +7,7 @@
 #include <map>
 #include <vector>
 #include <set>
+#include "scanner.h"
 
 class input_preworker {
 public:
@@ -57,10 +58,7 @@ private:
     int vertex_number = 0;
     size_t line_index = 0;
 
-    std::vector<std::string> tokenize(const std::string& line);
     void create_element();
-    void check_max_vertex();
-    int check_vertex_index(std::string& token) const;
 
     void manage_include(const std::vector<std::string> &token_line);
     void substitute_element(const std::vector<std::string> &token_line);
@@ -71,22 +69,34 @@ private:
                                      const std::map<std::string, std::string> &parameter_value_mapping);
     void check_element_existance(const std::string &element_name) const;
     void check_parameters_number(const element &element_, const std::vector<std::string> &element_values) const;
-    void check_define_token_line(const std::vector<std::string> &token_line) const;
-    void check_element_token_line(const std::vector<std::string> &token_line) const;
-    void check_include_token_line(const std::vector<std::string> &token_line) const;
-    void check_internal_token_line(const std::vector<std::string> &token_line) const;
-    void check_edge_token_line(const std::vector<std::string> &token_line) const;
-    void check_define_edge_token_line(const std::vector<std::string> &token_line) const;
-    void check_name(const std::string& token) const;
-    void check_integer(const std::string& token) const;
-    void check_double(const std::string& token) const;
-    void check_tokens_equal(const std::string& token, const std::string& expected_token) const;
-    void check_second_token_is_name(const std::vector<std::string> &token_line, size_t line_size) const;
-    void check_edge_attributes(const std::vector<std::string> &token_line, size_t max_tokens) const;
     void check_parameter_defined(const std::vector<std::string> &token_line, const element &element_) const;
     void print_message_prefix() const;
 
     const std::set<std::string> Punctuation{";", ",", "(", ")"};
+
+    void tokenize(std::istream &input);
+
+    void tokenize_include(const Scanner &scanner);
+
+    void tokenize_define(const Scanner &scanner);
+
+    void tokenize_internal(const Scanner &scanner);
+
+    void tokenize_element_edge(const Scanner &scanner);
+
+    void tokenize_edge(const Scanner &scanner);
+
+    void tokenize_substitution(const Scanner &scanner);
+
+    void tokenize_two_token_line(const Scanner &scanner, int shift);
+
+    std::stringstream simplify_element_line(const Scanner &scanner) const;
+
+    std::stringstream simplify_edge_line(const Scanner &scanner) const;
+
+    void tokenize_edge_attributes(std::stringstream &edge_line_, std::vector<std::string> &edge_tokens, int shift);
+
+    void check_element_redefinition(std::string name);
 };
 
 
