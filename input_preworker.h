@@ -7,6 +7,7 @@
 #include <map>
 #include <vector>
 #include <set>
+#include "scanner.h"
 
 class input_preworker {
 public:
