@@ -22,7 +22,7 @@ add_test(big_ac_circuit_test big_ac_circuit_test)
 add_test(big_three_phase_circuit_test big_three_phase_circuit_test)
 
 set(GTEST gtest gmock gmock_main)
-set(SOURCE circuit.cpp input_preworker.cpp input_parser.cpp graph.cpp matrix.cpp)
+set(SOURCE circuit.cpp input_preworker.cpp scan.cpp input_parser.cpp graph.cpp matrix.cpp)
 
 add_executable(matrix_test t/matrix_test.cpp matrix.cpp)
 add_executable(graph_test t/graph_test.cpp graph.cpp)

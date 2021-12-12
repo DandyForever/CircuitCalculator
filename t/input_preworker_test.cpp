@@ -22,23 +22,12 @@ TEST(TokenizerTest, OneEdgeTest) {
     std::vector<std::vector<std::string>> expected_tokens;
     std::vector<std::string> expected_line;
     expected_line.emplace_back("1");
-    expected_line.emplace_back("--");
     expected_line.emplace_back("2");
-    expected_line.emplace_back(",");
-    expected_line.emplace_back("0");
-    expected_line.emplace_back("R");
-    expected_line.emplace_back(";");
-    expected_line.emplace_back("0");
-    expected_line.emplace_back("C");
-    expected_line.emplace_back(";");
-    expected_line.emplace_back("0");
-    expected_line.emplace_back("L");
-    expected_line.emplace_back(";");
-    expected_line.emplace_back("5");
-    expected_line.emplace_back("V");
-    expected_line.emplace_back(",");
+    expected_line.emplace_back("0R");
+    expected_line.emplace_back("0C");
+    expected_line.emplace_back("0L");
+    expected_line.emplace_back("5V");
     expected_line.emplace_back("-1");
-    expected_line.emplace_back(";");
     expected_tokens.push_back(expected_line);
     EXPECT_EQ(preworker.get_tokens(), expected_tokens);
 }
@@ -50,13 +39,9 @@ TEST(TokenizerTest, DefineTest) {
     std::vector<std::string> expected_line;
     expected_line.emplace_back("define");
     expected_line.emplace_back("Function");
-    expected_line.emplace_back("(");
     expected_line.emplace_back("A");
-    expected_line.emplace_back(",");
     expected_line.emplace_back("B");
-    expected_line.emplace_back(",");
     expected_line.emplace_back("C");
-    expected_line.emplace_back(")");
     expected_tokens.push_back(expected_line);
     EXPECT_EQ(preworker.get_tokens(), expected_tokens);
 }
@@ -68,13 +53,9 @@ TEST(TokenizerTest, DefineOneLineTest) {
     std::vector<std::string> expected_line1;
     expected_line1.emplace_back("define");
     expected_line1.emplace_back("Function");
-    expected_line1.emplace_back("(");
     expected_line1.emplace_back("A");
-    expected_line1.emplace_back(",");
     expected_line1.emplace_back("B");
-    expected_line1.emplace_back(",");
     expected_line1.emplace_back("C");
-    expected_line1.emplace_back(")");
     expected_tokens.push_back(expected_line1);
     std::vector<std::string> expected_line2;
     expected_line2.emplace_back("");
@@ -99,7 +80,7 @@ TEST(PreworkerTest, DefineTest) {
     std::istringstream input("define Function(A,B)\n A--B, 0R; 0C; 0L;\nFunction(1,2)");
     input_preworker preworker(input, "input", 0);
     preworker.perform_prework();
-    std::string expected_output("1--2,0R;0C;0L;\n");
+    std::string expected_output("1 2 0R 0C 0L \n");
     EXPECT_EQ(preworker.get_output(), expected_output);
 }
 
@@ -123,7 +104,7 @@ TEST(PreworkerTest, DefineEmptyLineTest) {
     std::istringstream input("define Function(A,B)\n A--B, 0R; 0C; 0L;\n B--A, 0R; 0C; 0L;\n\n1--2, 0R; 0C; 0L;");
     input_preworker preworker(input, "input", 0);
     preworker.perform_prework();
-    std::string expected_output("1--2,0R;0C;0L;\n");
+    std::string expected_output("1 2 0R 0C 0L \n");
     EXPECT_EQ(preworker.get_output(), expected_output);
 }
 
@@ -131,7 +112,7 @@ TEST(PreworkerTest, EmptyLineBetweenEdgesTest) {
     std::istringstream input("1--2, 0R; 0C; 0L;\n\n2--1, 0R;0C;0L;");
     input_preworker preworker(input, "input", 0);
     preworker.perform_prework();
-    std::string expected_output("1--2,0R;0C;0L;\n2--1,0R;0C;0L;\n");
+    std::string expected_output("1 2 0R 0C 0L \n2 1 0R 0C 0L \n");
     EXPECT_EQ(preworker.get_output(), expected_output);
 }
 
@@ -143,7 +124,7 @@ TEST(PreworkerTest, IncludeTest) {
     std::istringstream input("include test.txt\nFunction(1,2)");
     input_preworker preworker(input, "input", 0);
     preworker.perform_prework();
-    std::string expected_output("1--2,0R;0C;0L;\n");
+    std::string expected_output("1 2 0R 0C 0L \n");
     EXPECT_EQ(preworker.get_output(), expected_output);
 }
 
@@ -155,7 +136,7 @@ TEST(PreworkerTest, IncludeAndCircuitTest) {
     std::istringstream input("include test.txt\nFunction(3,4)");
     input_preworker preworker(input, "input", 0);
     preworker.perform_prework();
-    std::string expected_output("1--2,0R;0C;0L;\n3--4,0R;0C;0L;\n4--3,0R;0C;0L;\n");
+    std::string expected_output("1 2 0R 0C 0L \n3 4 0R 0C 0L \n4 3 0R 0C 0L \n");
     EXPECT_EQ(preworker.get_output(), expected_output);
 }
 
@@ -167,7 +148,7 @@ TEST(PreworkerTest, InternalTest) {
     std::istringstream input("include test.txt\nFunction(1,2)");
     input_preworker preworker(input, "input", 0);
     preworker.perform_prework();
-    std::string expected_output("1--3,0R;0C;0L;\n2--3,0R;0C;0L;\n");
+    std::string expected_output("1 3 0R 0C 0L \n2 3 0R 0C 0L \n");
     EXPECT_EQ(preworker.get_output(), expected_output);
 }
 
@@ -179,7 +160,7 @@ TEST(PreworkerTest, NoParamsFunctionWithInternalTest) {
     std::istringstream input("include test.txt\nFunction()");
     input_preworker preworker(input, "input", 0);
     preworker.perform_prework();
-    std::string expected_output("1--1,0R;0C;0L;\n");
+    std::string expected_output("1 1 0R 0C 0L \n");
     EXPECT_EQ(preworker.get_output(), expected_output);
 }
 
@@ -202,7 +183,7 @@ TEST(PreworkerTest, EmptyIncludeTest) {
     std::istringstream input("include test.txt\n1 -- 2, 0R;0C;0L;");
     input_preworker preworker(input, "input", 0);
     preworker.perform_prework();
-    std::string expected_output("1--2,0R;0C;0L;\n");
+    std::string expected_output("1 2 0R 0C 0L \n");
     EXPECT_EQ(preworker.get_output(), expected_output);
 }
 
@@ -254,7 +235,7 @@ TEST(PreworkerTest, EmptyLineInsideDefineTest) {
     std::istringstream input("include test.txt\nFunction(3,4)");
     input_preworker preworker(input, "input", 0);
     preworker.perform_prework();
-    std::string expected_output("3--4,0R;0C;0L;\n4--3,0R;0C;0L;\n");
+    std::string expected_output("3 4 0R 0C 0L \n4 3 0R 0C 0L \n");
     EXPECT_EQ(preworker.get_output(), expected_output);
 }
 
