@@ -8,6 +8,10 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_compile_options(-g -Wall -Wextra -Werror)
 
+set(FlexScanner scan.cpp)
+find_package(FLEX REQUIRED)
+flex_target(scanner scan.ll ${FlexScanner})
+
 add_subdirectory(external/googletest)
 
 add_test(matrix_test matrix_test)
@@ -22,12 +26,12 @@ add_test(big_ac_circuit_test big_ac_circuit_test)
 add_test(big_three_phase_circuit_test big_three_phase_circuit_test)
 
 set(GTEST gtest gmock gmock_main)
-set(SOURCE circuit.cpp input_preworker.cpp scan.cpp input_parser.cpp graph.cpp matrix.cpp)
+set(SOURCE circuit.cpp input_preworker.cpp ${FlexScanner} input_parser.cpp graph.cpp matrix.cpp)
 
 add_executable(matrix_test t/matrix_test.cpp matrix.cpp)
 add_executable(graph_test t/graph_test.cpp graph.cpp)
 add_executable(input_parser_test t/input_parser_test.cpp input_parser.cpp)
-add_executable(input_preworker_test t/input_preworker_test.cpp input_preworker.cpp scan.cpp)
+add_executable(input_preworker_test t/input_preworker_test.cpp input_preworker.cpp)
 add_executable(dc_circuit_test t/dc_circuit_test.cpp ${SOURCE})
 add_executable(ac_circuit_test t/ac_circuit_test.cpp ${SOURCE})
 add_executable(three_phase_circuit_test t/three_phase_circuit_test.cpp ${SOURCE})
